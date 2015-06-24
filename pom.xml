@@ -10,6 +10,8 @@
 
     <properties>
         <dropwizard.version>0.8.1</dropwizard.version>
+        <dropwizard.jdbi.version>0.8.1</dropwizard.jdbi.version>
+        <h2.version>1.4.187</h2.version>
     </properties>
 
     <dependencies>
@@ -18,6 +20,17 @@
             <artifactId>dropwizard-core</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jdbi</artifactId>
+            <version>${dropwizard.jdbi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+
     </dependencies>
 
 
