@@ -4,6 +4,7 @@ package com.octo.rnd.perf.microservices.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.octo.rnd.perf.microservices.Configuration;
+import com.octo.rnd.perf.microservices.jdbi.ProcStockDAO;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;
@@ -20,6 +21,11 @@ import java.util.Random;
 @Path("/compute")
 public class ComputeResource {
     final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
+    final ProcStockDAO dao;
+
+    public ComputeResource(final ProcStockDAO dao) {
+        this.dao = dao;
+    }
 
     @GET
     @Timed
@@ -36,22 +42,26 @@ public class ComputeResource {
     }
 
 
-
-
-
-    public long callDatabase(final long nbCalls) {
+    /**
+     * This method calls several time a stored procedure that only wait during the target time
+     * @param nbCalls number of Stored Procedure Call to perform
+     * @param targetUnitMillis Number of millisecond to sleep
+     */
+    public void callDatabase(final long nbCalls, final long targetUnitMillis) {
         for(long i = 0; i < nbCalls; i++) {
             //https://github.com/stevenalexander/dropwizard-jdbi
+            dao.callStoredProcedure(targetUnitMillis);
         }
-        return  nbCalls;
     }
 
     /**
-     *
-     * @param targetTime Target elapse compute time in ms.
-     * @return
+     * This method implements a simple compute intensive algorithm that loops during approximately the target time
+     * Measure in the unit test shows a 20% difference with a 100 ms. target but it is not a SLA for the method
+     * @param targetMillis Target elapse compute time in ms.
+     * @return Measured elapse compute time in ms. inside the method.
      */
-    public long cpuIntensiveCompute(final long targetTime) {
+    long cpuIntensiveCompute(final long targetMillis) {
+        final long NS_TO_MS = 1000000;
         final long start = System.nanoTime();
         Random random = new Random();
         //Capitalization compute
@@ -61,19 +71,24 @@ public class ComputeResource {
 
         dailyRate = new BigDecimal(Math.abs(random.nextGaussian()));
         futureValue = new BigDecimal(Math.abs(random.nextGaussian()*10));
-        nbOfDay = Math.abs(random.nextInt(25));
-        BigDecimal now = BigDecimal.ZERO;
+        nbOfDay = Math.abs(random.nextInt(10));
+        BigDecimal actualValue = BigDecimal.ZERO;
         long end = System.nanoTime();
         long elapse = end - start;
+        long maxIncElapse = 0; //maximum elapse time by loop
 
-        while(elapse < targetTime * 1000000) {
-            now = now.add(futureValue.multiply((dailyRate.add(BigDecimal.ONE)).pow(nbOfDay)));
-            end = System.nanoTime();
+        //Prefer to be below than above because function call especially at startup is costly
+        while(elapse + maxIncElapse < targetMillis * NS_TO_MS) {
+            //actualValue = actualValue.add(futureValue.multiply((dailyRate.add(BigDecimal.ONE)).pow(nbOfDay)));
+            final long now = System.nanoTime();
+            maxIncElapse = now - end > maxIncElapse ? now - end : maxIncElapse;
+            logger.trace("Increment elapse is {} ns", maxIncElapse);
+            end = now;
             elapse = end - start;
         }
 
-        logger.info("Compute result is {}", now);
-        return elapse;
+        logger.debug("Compute result is {}", actualValue);
+        return elapse / NS_TO_MS;
     }
 
 

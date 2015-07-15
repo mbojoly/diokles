@@ -1,5 +1,6 @@
 package com.octo.rnd.perf.microservices;
 
+import com.octo.rnd.perf.microservices.jdbi.ProcStockDAO;
 import com.octo.rnd.perf.microservices.resources.ComputeResource;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
@@ -34,10 +35,10 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "h2");
-        //final UserDAO dao = jdbi.onDemand(UserDAO.class);
-        //environment.jersey().register(new UserResource(dao));
+        //See https://github.com/sahilm/dropwizard-snapci-sample/blob/master/src/main/java/com/snapci/microblog/MicroBlogService.java
+        final ProcStockDAO dao = jdbi.onDemand(ProcStockDAO.class);
 
-        final ComputeResource computeResource = new ComputeResource();
+        final ComputeResource computeResource = new ComputeResource(dao);
         environment.jersey().register(computeResource);
 
         final TemplateHealthCheck healthCheck =
