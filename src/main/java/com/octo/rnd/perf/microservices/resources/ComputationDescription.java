@@ -14,6 +14,7 @@ public class ComputationDescription {
     @Consumes(MediaType.APPLICATION_JSON)
     static class ServiceCall {
         private ComputationDescription computationDescription;
+        //In order to avoid copy and paste the same description
         private int callsNumber;
 
         public ServiceCall() {

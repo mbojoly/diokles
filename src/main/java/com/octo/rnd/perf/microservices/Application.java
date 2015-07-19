@@ -4,10 +4,12 @@ import com.octo.rnd.perf.microservices.health.TemplateHealthCheck;
 import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
 import com.octo.rnd.perf.microservices.resources.ComputeResource;
 import com.octo.rnd.perf.microservices.resources.HelloWorldResource;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.h2.tools.Server;
 
+import javax.ws.rs.client.Client;
 import java.sql.SQLException;
 
 public class Application extends io.dropwizard.Application<Configuration> {
@@ -43,7 +45,10 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
         final DAOFactoryImpl daoFactory = new DAOFactoryImpl();
 
-        final ComputeResource computeResource = new ComputeResource(daoFactory);
+        final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
+                .build(getName());
+
+        final ComputeResource computeResource = new ComputeResource(daoFactory, client);
         environment.jersey().register(computeResource);
 
         final TemplateHealthCheck healthCheck =

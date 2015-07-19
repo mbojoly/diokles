@@ -5,7 +5,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.octo.rnd.perf.microservices.Application;
 import com.octo.rnd.perf.microservices.jdbi.DAOFactory;
 import com.octo.rnd.perf.microservices.jdbi.StoredProcDAO;
-import org.skife.jdbi.v2.exceptions.UnableToCreateStatementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +12,11 @@ import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.Random;
 
@@ -20,16 +24,18 @@ import java.util.Random;
 public class ComputeResource {
     final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
     final DAOFactory daoFactory;
+    final Client rsClient;
 
-    public ComputeResource(final DAOFactory daoFactory) {
+    public ComputeResource(final DAOFactory daoFactory, Client rsClient) {
         this.daoFactory = daoFactory;
+        this.rsClient = rsClient;
     }
 
     @GET
     @Timed
     public String get() {
         return "Creating a new resource is volontary doing the worst thing a performance application can do. " +
-                "Just PUT and See...";
+                "Just POST and See...";
     }
 
     @POST
@@ -54,9 +60,45 @@ public class ComputeResource {
         time = cpuIntensiveCompute(computationDescription.getCpuIntensiveComputationsDuration());
         builder.append("CPU intensive compute ").append(time).append("ms. ").append(System.lineSeparator());
 
+        builder.append(
+                callRestResource(computationDescription)
+        );
+
         return builder.toString();
     }
 
+    /**
+     * This method calls recursively through HTTP the computeResource in order to model a call to a service
+     *
+     * @param computationDescription Same description as for this resource
+     * @return Time and HTTP response received
+     */
+    public String callRestResource(ComputationDescription computationDescription) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Call HTTP Ressources :");
+        final long begin = System.nanoTime();
+        if (computationDescription.getServiceCalls() != null && computationDescription.getServiceCalls().size() > 0) {
+            WebTarget target = rsClient.target("http://localhost:8080").path("compute");
+
+            //TODO : Check the log
+            //TODO : Check the client header (see log of dropwizard for recursive call)
+            for (ComputationDescription.ServiceCall sc : computationDescription.getServiceCalls()) {
+                for (int i = 0; i < sc.getCallsNumber(); i++) {
+                    Response response = target.request(MediaType.TEXT_PLAIN).post(Entity.entity(sc.getComputationDescription(), MediaType.APPLICATION_JSON_TYPE));
+                    builder.append('{').append(System.lineSeparator()).append(response.readEntity(String.class))
+                    .append('}').append(System.lineSeparator());
+                }
+            }
+
+        }
+
+        final long end = System.nanoTime();
+        final double duration = (end - begin) / Application.MS_IN_NS;
+        builder.append(" For a total of ")
+                .append(duration)
+                .append(" ms.");
+        return builder.toString();
+    }
 
     /**
      * This method calls several time a stored procedure that only wait during the target time
@@ -68,15 +110,10 @@ public class ComputeResource {
         final long begin = System.nanoTime();
         StoredProcDAO storedProcDAO = daoFactory.getProcStockDAO();
         for (long i = 0; i < nbCalls; i++) {
-            try {
-                //https://github.com/stevenalexander/dropwizard-jdbi
-                storedProcDAO.callStoredProcedure(targetUnitMillis);
-            } catch(UnableToCreateStatementException use) {
-                throw use;
-            }
+            //https://github.com/stevenalexander/dropwizard-jdbi
+            storedProcDAO.callStoredProcedure(targetUnitMillis);
         }
         final long end = System.nanoTime();
-
         return (end - begin) / Application.MS_IN_NS;
     }
 

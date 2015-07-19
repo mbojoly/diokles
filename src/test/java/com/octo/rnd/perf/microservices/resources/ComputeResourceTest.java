@@ -12,6 +12,13 @@ import org.skife.jdbi.v2.exceptions.UnableToExecuteStatementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +29,7 @@ import static org.easymock.EasyMock.replay;
 
 public class ComputeResourceTest {
 
+    public static final String NOTHING_IT_IS_JUSTE_A_MOCK = "Nothing it is juste a mock";
     final static Logger logger = LoggerFactory.getLogger(ComputeResourceTest.class);
     private static DBI dbi;
     private static Handle h;
@@ -70,7 +78,7 @@ public class ComputeResourceTest {
 
         replay(daoFactoryMock);
 
-        ComputeResource cr = new ComputeResource(daoFactoryMock);
+        ComputeResource cr = new ComputeResource(daoFactoryMock, null);
 
         final long inputTime = 100;
         final int nbOfCalls = 1;
@@ -93,7 +101,7 @@ public class ComputeResourceTest {
         EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(daoMock);
         EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(daoMock);
 
-        ComputeResource cr = new ComputeResource(daoFactoryMock);
+        ComputeResource cr = new ComputeResource(daoFactoryMock, null);
 
         replay(daoFactoryMock);
 
@@ -114,7 +122,7 @@ public class ComputeResourceTest {
 
         replay(daoFactoryMock);
 
-        ComputeResource cr = new ComputeResource(daoFactoryMock);
+        ComputeResource cr = new ComputeResource(daoFactoryMock, null);
 
         final long inputTime = 100;
         final int nbOfCalls = 1;
@@ -130,11 +138,49 @@ public class ComputeResourceTest {
 
     @Test
     public void testTimeForCpuIntensiveCompute() {
-        ComputeResource cr = new ComputeResource(null);
+        ComputeResource cr = new ComputeResource(null, null);
         final long inputTime = 100;
         Helper.MeasuredTime mt = Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         if (mt.InnerTimeMillis.isPresent()) assertThat(mt.InnerTimeMillis.get()).isLessThanOrEqualTo(inputTime);
         assertThat(mt.PercentError).isLessThan(0.2);
+    }
+
+    @Test
+    public void testRestCall() {
+        ComputationDescription cd = new ComputationDescription(0, 0, 0, 2,
+                Arrays.asList(
+                        new ComputationDescription.ServiceCall(
+                                new ComputationDescription(),
+                                2
+                        )
+                )
+        );
+        Client rsClientMock = createMock(Client.class);
+        Invocation.Builder builderMock = createMock(Invocation.Builder.class);
+        WebTarget webTargetMock = createMock(WebTarget.class);
+        Response responseMock = createMock(Response.class);
+
+        for(ComputationDescription.ServiceCall sc : cd.getServiceCalls())
+        {
+            for(int i = 0 ; i < sc.getCallsNumber(); i++) {
+                EasyMock.expect(webTargetMock.request(MediaType.TEXT_PLAIN)).andReturn(builderMock);
+                EasyMock.expect(builderMock.post(Entity.entity(sc.getComputationDescription(), MediaType.APPLICATION_JSON_TYPE))).andReturn(responseMock);
+                EasyMock.expect(responseMock.readEntity(String.class)).andReturn(NOTHING_IT_IS_JUSTE_A_MOCK);
+            }
+        }
+
+        EasyMock.expect(rsClientMock.target("http://localhost:8080")).andReturn(webTargetMock);
+        EasyMock.expect(webTargetMock.path("compute")).andReturn(webTargetMock);
+
+        replay(builderMock);
+        replay(webTargetMock);
+        replay(responseMock);
+        replay(rsClientMock);
+
+        ComputeResource cs = new ComputeResource(null, rsClientMock);
+        String response = cs.callRestResource(cd);
+        assertThat(response).contains(NOTHING_IT_IS_JUSTE_A_MOCK);
+
     }
 
 }

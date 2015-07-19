@@ -1,6 +1,7 @@
 package com.octo.rnd.perf.microservices;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -35,4 +36,12 @@ public class Configuration extends io.dropwizard.Configuration {
         this.defaultName = name;
     }
 
+    @Valid
+    @NotNull
+    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+
+    @JsonProperty("httpClient")
+    public JerseyClientConfiguration getJerseyClientConfiguration() {
+        return httpClient;
+    }
 }

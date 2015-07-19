@@ -11,6 +11,7 @@
     <properties>
         <dropwizard.version>0.8.1</dropwizard.version>
         <dropwizard.jdbi.version>0.8.1</dropwizard.jdbi.version>
+        <dropwizard.client.version>0.8.1</dropwizard.client.version>
         <h2.version>1.4.187</h2.version>
     </properties>
 
@@ -25,6 +26,12 @@
             <artifactId>dropwizard-jdbi</artifactId>
             <version>${dropwizard.jdbi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-client</artifactId>
+            <version>${dropwizard.client.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
