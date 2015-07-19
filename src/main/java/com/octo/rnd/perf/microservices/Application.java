@@ -35,6 +35,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "h2");
+
         //See https://github.com/sahilm/dropwizard-snapci-sample/blob/master/src/main/java/com/snapci/microblog/MicroBlogService.java
         final ProcStockDAO dao = jdbi.onDemand(ProcStockDAO.class);
 

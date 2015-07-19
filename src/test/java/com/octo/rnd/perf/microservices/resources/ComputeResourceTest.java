@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,7 +31,7 @@ public class ComputeResourceTest {
      */
     @BeforeClass
     public static void doSetUp() throws Exception {
-        dbi = new DBI("jdbc:h2:mem:" + UUID.randomUUID());
+        dbi = new DBI("jdbc:h2:mem:" + UUID.randomUUID() + ":MULTI_THREADED=1");
         h = dbi.open();
         try {
             h.execute("drop alias sleep");
@@ -59,6 +58,8 @@ public class ComputeResourceTest {
         if (h != null) h.close();
     }
 
+
+
     @Test
     public void testTimeForCallDatabaseOnce() {
         ProcStockDAO dao = dbi.onDemand(ProcStockDAO.class);
@@ -66,7 +67,7 @@ public class ComputeResourceTest {
 
         final long inputTime = 100;
         final int nbOfCalls = 1;
-        MeasuredTime mt = measureTime(
+        Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
                     cr.callDatabase(nbOfCalls, inputTime);
                     return Optional.empty();
@@ -98,7 +99,7 @@ public class ComputeResourceTest {
 
         final long inputTime = 100;
         final int nbOfCalls = 2;
-        MeasuredTime mt = measureTime(
+        Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
                     cr.callDatabase(nbOfCalls, inputTime);
                     return Optional.empty();
@@ -112,35 +113,9 @@ public class ComputeResourceTest {
     public void testTimeForCpuIntensiveCompute() {
         ComputeResource cr = new ComputeResource(null);
         final long inputTime = 100;
-        MeasuredTime mt = measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
+        Helper.MeasuredTime mt = Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         if (mt.InnerTimeMillis.isPresent()) assertThat(mt.InnerTimeMillis.get()).isLessThanOrEqualTo(inputTime);
         assertThat(mt.PercentError).isLessThan(0.2);
-    }
-
-    private static class MeasuredTime {
-        Optional<Long> InnerTimeMillis; // Time given returned by the operationToMeasure in ms
-        double PercentError; //Error between input time and measured time
-
-        public MeasuredTime(long percentError) {
-            PercentError = percentError;
-        }
-
-        public MeasuredTime(Optional<Long> innerTimeMillis, double percentError) {
-            InnerTimeMillis = innerTimeMillis;
-            PercentError = percentError;
-        }
-    }
-
-    private MeasuredTime measureTime(Function<Long, Optional<Long>> operationToMeasure, final long UnitInputTime, int nbOfCalls) {
-        final long totalTime = UnitInputTime * nbOfCalls;
-        final long start = System.nanoTime();
-        final Optional<Long> result = operationToMeasure.apply(UnitInputTime);
-        final long end = System.nanoTime();
-        final long elapse = (end - start) / 1000000; //Convert ns to ms
-        logger.debug("Elapse is {} ms", elapse);
-        final double error = (double) (Math.abs(totalTime - elapse)) / totalTime;
-        logger.debug("Error between input and measure is {}", error);
-        return new MeasuredTime(result, error);
     }
 
 }
