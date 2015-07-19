@@ -1,7 +1,7 @@
 package com.octo.rnd.perf.microservices.resources;
 
-import com.octo.rnd.perf.microservices.jdbi.ProcStockDAO;
-import junit.framework.Assert;
+import com.octo.rnd.perf.microservices.Application;
+import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
 import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -14,49 +14,26 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class ComputeResourceIntegrationTest {
 
     final static Logger logger = LoggerFactory.getLogger(ComputeResourceIntegrationTest.class);
 
     static Server server;
+    //Be sure to have only one DAOFactory for all the application
+    //In the contrary there will be several DB per thread as ThreadLocal is specific to a pair (instance, thread)
+    static final DAOFactoryImpl daoFactory = new DAOFactoryImpl();
 
     @BeforeClass
     public static void doSetupH2Server() throws SQLException {
-        server = Server.createTcpServer("-tcpPort", "9093").start();
+        server = Server.createTcpServer("-tcpPort", new Short(Application.H2_TCP_PORT).toString()).start();
     }
 
-    @AfterClass
+
     public static void doTearDownH2Server() {
         if (server != null) server.stop();
-    }
-
-    /**
-     * See https://github.com/jdbi/jdbi/blob/master/src/test/java/org/skife/jdbi/v2/TestCallable.java
-     * but the correct syntax is now here http://www.h2database.com/h2.pdf
-     *
-     */
-    public DBI doSetUp()  {
-
-        //http://www.h2database.com/html/features.html#multiple_connections
-        //Multi-threaded is experimental but for a single database, only one request can run simultaneously
-        //So I choose to open one database per application thread in order to model the behaviour of a real DBMS
-        final DBI dbi = new DBI("jdbc:h2:tcp://localhost:9093/mem:perfms" + UUID.randomUUID() + ":MULTI_THREADED=1");
-        final Handle h = dbi.open();
-        try {
-            h.execute("drop alias sleep");
-        } catch (Exception e) {
-            // okay if not present
-        }
-
-        h.execute("CREATE ALIAS SLEEP " +
-                "FOR \"java.lang.Thread.sleep\"");
-
-        return dbi;
     }
 
     public static void doTearDown(final DBI dbi) {
@@ -84,14 +61,15 @@ public class ComputeResourceIntegrationTest {
 
         Thread t1 = new Thread(() -> dbc1.doDbCall(200));
         Thread t2 = new Thread(() -> dbc2.doDbCall(500));
-        Thread t3 = new Thread(() -> dbc3.doDbCall(5000));
-        Thread t4 = new Thread(() -> dbc4.doDbCall(20000));
+        Thread t3 = new Thread(() -> dbc3.doDbCall(750));
+        Thread t4 = new Thread(() -> dbc4.doDbCall(1000));
 
 
         t1.start();
         t2.start();
         t3.start();
         t4.start();
+
 
         logger.debug("Wait for tread1 to finish");
         t1.join();
@@ -108,30 +86,39 @@ public class ComputeResourceIntegrationTest {
         logger.debug("Wait for thread4 to finish");
         t4.join();
         assertThat(dbc4.error).isLessThan(0.3);
-}
+
+        //@AfterClass seems to not function correctly in a multi-threaded environment
+        doTearDownH2Server();
+    }
 
     private class DbCaller {
-        private double  error;
+        private double error;
 
         private void doDbCall(long inputTime) {
 
-            DBI dbi = doSetUp();
-            ProcStockDAO dao = dbi.onDemand(ProcStockDAO.class);
-            ComputeResource cr = new ComputeResource(dao);
+            //Force to build the DB before measuring
+            daoFactory.getProcStockDAO();
+
+            ComputeResource cr = new ComputeResource(daoFactory);
 
             logger.debug("Start Calling a stored procedure of {} ms", inputTime);
             final int nbOfCalls = 1;
-            Helper.MeasuredTime mt = Helper.measureTime(
-                    l -> {
-                        cr.callDatabase(nbOfCalls, inputTime);
-                        return Optional.empty();
-                    },
-                    inputTime,
-                    1);
+            try {
+                Helper.MeasuredTime mt = Helper.measureTime(
+                        l -> {
+                            cr.callDatabase(nbOfCalls, inputTime);
+                            return Optional.empty();
+                        },
+                        inputTime,
+                        1);
+                this.error = mt.PercentError;
+            } catch (Exception ex) {
+                this.error = Double.MAX_VALUE; //Be sure that the test fail
+                throw ex;
+            }
 
-            this.error = mt.PercentError;
 
-            doTearDown(dbi);
+            doTearDown(daoFactory.getDbi());
         }
     }
 

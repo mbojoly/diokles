@@ -20,11 +20,6 @@ public class Configuration extends io.dropwizard.Configuration {
         return template;
     }
 
-    @Valid
-    @NotNull
-    private DataSourceFactory database = new DataSourceFactory();
-
-
     @JsonProperty
     public void setTemplate(String template) {
         this.template = template;
@@ -40,13 +35,4 @@ public class Configuration extends io.dropwizard.Configuration {
         this.defaultName = name;
     }
 
-
-    public DataSourceFactory getDataSourceFactory() {
-        return database;
-    }
-
-    @JsonProperty("database")
-    public void setDataSourceFactory(DataSourceFactory database) {
-        this.database = database;
-    }
 }

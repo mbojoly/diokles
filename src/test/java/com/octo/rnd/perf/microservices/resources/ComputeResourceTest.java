@@ -1,7 +1,8 @@
 package com.octo.rnd.perf.microservices.resources;
 
-import com.octo.rnd.perf.microservices.jdbi.ProcStockDAO;
-import static org.easymock.EasyMock.*;
+import com.octo.rnd.perf.microservices.jdbi.DAOFactory;
+import com.octo.rnd.perf.microservices.jdbi.StoredProcDAO;
+import org.easymock.EasyMock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
 
 
 public class ComputeResourceTest {
@@ -31,7 +34,7 @@ public class ComputeResourceTest {
      */
     @BeforeClass
     public static void doSetUp() throws Exception {
-        dbi = new DBI("jdbc:h2:mem:" + UUID.randomUUID() + ":MULTI_THREADED=1");
+        dbi = new DBI("jdbc:h2:mem:" + UUID.randomUUID());
         h = dbi.open();
         try {
             h.execute("drop alias sleep");
@@ -59,11 +62,15 @@ public class ComputeResourceTest {
     }
 
 
-
     @Test
     public void testTimeForCallDatabaseOnce() {
-        ProcStockDAO dao = dbi.onDemand(ProcStockDAO.class);
-        ComputeResource cr = new ComputeResource(dao);
+        StoredProcDAO dao = dbi.onDemand(StoredProcDAO.class);
+        DAOFactory daoFactoryMock = createMock(DAOFactory.class);
+        EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(dao);
+
+        replay(daoFactoryMock);
+
+        ComputeResource cr = new ComputeResource(daoFactoryMock);
 
         final long inputTime = 100;
         final int nbOfCalls = 1;
@@ -81,24 +88,36 @@ public class ComputeResourceTest {
     @Test
     public void testCallDatabaseTwice() {
 
-        ProcStockDAO daoMock = createMock(ProcStockDAO.class);
-        ComputeResource cr = new ComputeResource(daoMock);
+        StoredProcDAO daoMock = createMock(StoredProcDAO.class);
+        DAOFactory daoFactoryMock = createMock(DAOFactory.class);
+        EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(daoMock);
+        EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(daoMock);
+
+        ComputeResource cr = new ComputeResource(daoFactoryMock);
+
+        replay(daoFactoryMock);
 
         final long inputTime = 100;
         daoMock.callStoredProcedure(inputTime);
         daoMock.callStoredProcedure(inputTime);
 
         replay(daoMock);
+
         cr.callDatabase(2, inputTime);
     }
 
     @Test
     public void testTimeForCallDatabaseTwice() {
-        ProcStockDAO dao = dbi.onDemand(ProcStockDAO.class);
-        ComputeResource cr = new ComputeResource(dao);
+        StoredProcDAO dao = dbi.onDemand(StoredProcDAO.class);
+        DAOFactory daoFactoryMock = createMock(DAOFactory.class);
+        EasyMock.expect(daoFactoryMock.getProcStockDAO()).andReturn(dao);
+
+        replay(daoFactoryMock);
+
+        ComputeResource cr = new ComputeResource(daoFactoryMock);
 
         final long inputTime = 100;
-        final int nbOfCalls = 2;
+        final int nbOfCalls = 1;
         Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
                     cr.callDatabase(nbOfCalls, inputTime);

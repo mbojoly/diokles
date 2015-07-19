@@ -1,5 +1,6 @@
 package com.octo.rnd.perf.microservices.resources;
 
+import com.octo.rnd.perf.microservices.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class Helper {
         final long start = System.nanoTime();
         final Optional<Long> result = operationToMeasure.apply(UnitInputTime);
         final long end = System.nanoTime();
-        final long elapse = (end - start) / 1000000; //Convert ns to ms
+        final long elapse = (end - start) / Application.MS_IN_NS; //Convert ns to ms
         logger.debug("Elapse is {} ms", elapse);
         final double error = (double) (Math.abs(totalTime - elapse)) / totalTime;
         logger.debug("Error between input and measure is {}", error);
