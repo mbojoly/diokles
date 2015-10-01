@@ -1,3 +1,4 @@
+java -jar target/microservices-1.0-SNAPSHOT.jar server microservices.yml
 
 CURL –X POST \
 -H "Accept: application/json" \

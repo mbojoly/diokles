@@ -1,6 +1,7 @@
 package com.octo.rnd.perf.microservices;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.octo.rnd.perf.microservices.resources.Deploy;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -16,6 +17,9 @@ public class Configuration extends io.dropwizard.Configuration {
     @NotEmpty
     private String defaultName = "Stranger";
 
+    //can not be empty by construction
+    private Deploy deploy = Deploy.LOCAL;
+
     @JsonProperty
     public String getTemplate() {
         return template;
@@ -24,6 +28,16 @@ public class Configuration extends io.dropwizard.Configuration {
     @JsonProperty
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    @JsonProperty
+    public Deploy getDeploy() {
+        return deploy;
+    }
+
+    @JsonProperty
+    public void setDeploy(Deploy deploy) {
+        this.deploy = deploy;
     }
 
     @JsonProperty

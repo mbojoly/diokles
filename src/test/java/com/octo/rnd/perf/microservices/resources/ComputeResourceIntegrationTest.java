@@ -28,7 +28,7 @@ public class ComputeResourceIntegrationTest {
 
     @BeforeClass
     public static void doSetupH2Server() throws SQLException {
-        server = Server.createTcpServer("-tcpPort", new Short(Application.H2_TCP_PORT).toString()).start();
+        server = Server.createTcpServer("-tcpPort", Short.toString(Application.H2_TCP_PORT)).start();
     }
 
 

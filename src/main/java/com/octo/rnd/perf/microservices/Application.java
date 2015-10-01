@@ -4,6 +4,7 @@ import com.octo.rnd.perf.microservices.health.TemplateHealthCheck;
 import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
 import com.octo.rnd.perf.microservices.resources.ComputeResource;
 import com.octo.rnd.perf.microservices.resources.HelloWorldResource;
+import de.thomaskrille.dropwizard.environment_configuration.EnvironmentConfigurationFactoryFactory;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -28,14 +29,16 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
-        // nothing to do yet
+        if(bootstrap != null) {
+            bootstrap.setConfigurationFactoryFactory(new EnvironmentConfigurationFactoryFactory<>());
+        }
     }
 
     @Override
     public void run(Configuration configuration,
                     Environment environment) throws SQLException {
 
-        Server.createTcpServer("-tcpPort", new Short(Application.H2_TCP_PORT).toString()).start();
+        Server.createTcpServer("-tcpPort", Short.toString(Application.H2_TCP_PORT)).start();
 
         final HelloWorldResource resource = new HelloWorldResource(
                 configuration.getTemplate(),
