@@ -1,3 +1,4 @@
 template: Hello, %s!
 defaultName: perfmicroservices
-deploy: $env:DEPLOY:LOCAL
+dbHost: $env:DB_HOST:INTERNAL
+dbPort: $env:DB_PORT:9093

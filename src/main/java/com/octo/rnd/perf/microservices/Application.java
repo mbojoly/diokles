@@ -9,14 +9,19 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.h2.tools.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import java.sql.SQLException;
 
 public class Application extends io.dropwizard.Application<Configuration> {
 
+    final static Logger logger = LoggerFactory.getLogger(Application.class);
+
     public static final long MS_IN_NS = 1000000;
-    public static final short H2_TCP_PORT = 9093;
+    static final String DEFAULT_HOST = "INTERNAL";
+    static final short H2_DEFAULT_TCP_PORT = 9093;
 
     public static void main(String[] args) throws Exception {
         new Application().run(args);
@@ -38,7 +43,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
     public void run(Configuration configuration,
                     Environment environment) throws SQLException {
 
-        Server.createTcpServer("-tcpPort", Short.toString(Application.H2_TCP_PORT)).start();
+        startH2IfNeeded(configuration);
 
         final HelloWorldResource resource = new HelloWorldResource(
                 configuration.getTemplate(),
@@ -46,7 +51,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
         );
         environment.jersey().register(resource);
 
-        final DAOFactoryImpl daoFactory = new DAOFactoryImpl();
+        final DAOFactoryImpl daoFactory = new DAOFactoryImpl(configuration);
 
         final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
                 .build(getName());
@@ -58,6 +63,15 @@ public class Application extends io.dropwizard.Application<Configuration> {
                 new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
         environment.jersey().register(resource);
+    }
+
+    void startH2IfNeeded(Configuration configuration) throws SQLException {
+        if(DEFAULT_HOST.equals(configuration.getDbHost())) {
+            final String port = Short.toString(Application.H2_DEFAULT_TCP_PORT);
+            logger.info("Starting internal H2 server with port {}", port);
+            Server s = Server.createTcpServer("-tcpPort", port);
+            s.start();
+        }
     }
 
 }

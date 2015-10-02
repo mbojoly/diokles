@@ -1,13 +1,12 @@
 package com.octo.rnd.perf.microservices;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.octo.rnd.perf.microservices.resources.Deploy;
 import io.dropwizard.client.JerseyClientConfiguration;
-import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("unused")
 public class Configuration extends io.dropwizard.Configuration {
@@ -17,8 +16,12 @@ public class Configuration extends io.dropwizard.Configuration {
     @NotEmpty
     private String defaultName = "Stranger";
 
-    //can not be empty by construction
-    private Deploy deploy = Deploy.LOCAL;
+    @NotEmpty
+    @Pattern(regexp="([\\da-z\\.-]+)")
+    private String dbHost;
+
+    @NotNull
+    private short dbPort;
 
     @JsonProperty
     public String getTemplate() {
@@ -31,14 +34,20 @@ public class Configuration extends io.dropwizard.Configuration {
     }
 
     @JsonProperty
-    public Deploy getDeploy() {
-        return deploy;
+    public String getDbHost() {
+        return dbHost;
     }
 
     @JsonProperty
-    public void setDeploy(Deploy deploy) {
-        this.deploy = deploy;
+    public void setDbHost(String dbHost) {
+        this.dbHost = dbHost;
     }
+
+    @JsonProperty
+    public short getDbPort() { return dbPort; }
+
+    @JsonProperty
+    public void setDbPort(short dbPort) { this.dbPort = dbPort; }
 
     @JsonProperty
     public String getDefaultName() {

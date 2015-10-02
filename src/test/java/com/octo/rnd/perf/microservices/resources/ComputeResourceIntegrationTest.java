@@ -1,6 +1,7 @@
 package com.octo.rnd.perf.microservices.resources;
 
 import com.octo.rnd.perf.microservices.Application;
+import com.octo.rnd.perf.microservices.Configuration;
 import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
 import org.h2.tools.Server;
 import org.junit.AfterClass;
@@ -22,13 +23,21 @@ public class ComputeResourceIntegrationTest {
     final static Logger logger = LoggerFactory.getLogger(ComputeResourceIntegrationTest.class);
 
     static Server server;
-    //Be sure to have only one DAOFactory for all the application
-    //In the contrary there will be several DB per thread as ThreadLocal is specific to a pair (instance, thread)
-    static final DAOFactoryImpl daoFactory = new DAOFactoryImpl();
+    static Configuration conf;
+    static DAOFactoryImpl daoFactory;
+    static {
+        conf = new Configuration();
+        conf.setDbHost("localhost");
+        conf.setDbPort((short) 9193);
+        //Be sure to have only one DAOFactory for all the application
+        //In the contrary there will be several DB per thread as ThreadLocal is specific to a pair (instance, thread)
+        daoFactory = new DAOFactoryImpl(conf);
+    }
+
 
     @BeforeClass
     public static void doSetupH2Server() throws SQLException {
-        server = Server.createTcpServer("-tcpPort", Short.toString(Application.H2_TCP_PORT)).start();
+        server = Server.createTcpServer("-tcpPort", Short.toString(conf.getDbPort())).start();
     }
 
 
