@@ -8,3 +8,5 @@ http://localhost:8080/compute
 
 How to launch H2
 java -cp "C:\Users\mbojoly\.m2\repository\com\h2database\h2\1.4.187\h2-1.4.187.jar" org.h2.tools.Server -tcpPort 9093
+
+TODO : Corriger INTERNAL n'est pas un nom d'host valid

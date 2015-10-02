@@ -17,7 +17,7 @@ public class Configuration extends io.dropwizard.Configuration {
     private String defaultName = "Stranger";
 
     @NotEmpty
-    @Pattern(regexp="([\\da-z\\.-]+)")
+    @Pattern(regexp="([\\da-zA-Z\\.-]+)")
     private String dbHost;
 
     @NotNull

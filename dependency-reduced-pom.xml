@@ -27,7 +27,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>com.example.helloworld.HelloWorldApplication</mainClass>
+                  <mainClass>com.octo.rnd.perf.microservices.Application</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -56,6 +56,26 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.3.3</version>
+        <configuration>
+          <imageName>microservices</imageName>
+          <baseImage>java</baseImage>
+          <entryPoint>["java", "-jar", "./${project.build.finalName}.jar", "server", "./microservices.yml"]</entryPoint>
+          <resources>
+            <resource>
+              <directory>${project.build.directory}</directory>
+              <include>${project.build.finalName}.jar</include>
+            </resource>
+            <resource>
+              <directory>${project.basedir}</directory>
+              <include>microservices.yml</include>
+            </resource>
+          </resources>
         </configuration>
       </plugin>
     </plugins>
@@ -99,11 +119,40 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.6.3</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>powermock-module-junit4-common</artifactId>
+          <groupId>org.powermock</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>1.6.3</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>cglib-nodep</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>powermock-api-support</artifactId>
+          <groupId>org.powermock</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <properties>
     <h2.version>1.4.187</h2.version>
     <dropwizard.version>0.8.1</dropwizard.version>
     <dropwizard.client.version>0.8.1</dropwizard.client.version>
+    <dropwizard.environment.configuration.version>1.1</dropwizard.environment.configuration.version>
     <dropwizard.jdbi.version>0.8.1</dropwizard.jdbi.version>
   </properties>
 </project>
