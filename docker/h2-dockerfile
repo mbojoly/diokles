@@ -1,0 +1,27 @@
+#
+# H2 Dockerfile
+# Source
+#
+
+# Pull base image.
+FROM java
+
+# Install H2
+ENV PACKAGE=h2-2015-09-13.zip
+RUN \
+  cd /tmp && \
+  wget http://www.h2database.com/${PACKAGE} && \
+  unzip ${PACKAGE} && \
+  rm -f ${PACKAGE} && \
+  mkdir -p /opt/h2 && \
+  mv /tmp/h2 /opt && \
+  mkdir -p /opt/h2-data
+
+# Expose ports.
+#   - 1521: H2 Server
+#   -   81: H2 Console
+#   - 9093: External H2 TCP port
+EXPOSE 1521 81 9093
+
+# Define default command
+CMD java -cp /opt/h2/bin/h2*.jar org.h2.tools.Server -tcp -tcpAllowOthers -tcpPort 9093
