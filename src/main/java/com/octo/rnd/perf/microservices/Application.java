@@ -20,8 +20,8 @@ public class Application extends io.dropwizard.Application<Configuration> {
     final static Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static final long MS_IN_NS = 1000000;
-    static final String DEFAULT_HOST = "INTERNAL";
-    static final short H2_DEFAULT_TCP_PORT = 9093;
+    public static final String DEFAULT_HOST = "INTERNAL";
+    public static final short H2_DEFAULT_TCP_PORT = 9093;
 
     public static void main(String[] args) throws Exception {
         new Application().run(args);

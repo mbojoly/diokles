@@ -22,7 +22,7 @@ public class DAOFactoryImpl implements  DAOFactory {
             dbi=
             new ThreadLocal<DBI>() {
                 @Override protected DBI initialValue() {
-                    final String h2Url = "jdbc:h2:tcp://" + dbHost + ":" + dbPort + "/~/perfms-" + Thread.currentThread().getId();
+                    final String h2Url = buildH2Url(dbHost, dbPort);
                     final DBI localDbi = new DBI(h2Url);
                     final Handle h = localDbi.open();
                     try {
@@ -50,6 +50,13 @@ public class DAOFactoryImpl implements  DAOFactory {
                     }
                 };
         }
+    }
+
+    /**
+     * Static for testing purpose
+     **/
+    static String buildH2Url(String dbHost, short dbPort) {
+        return "jdbc:h2:tcp://" + (Application.DEFAULT_HOST.equals(dbHost) ? "localhost" : dbHost) + ":" + dbPort + "/~/perfms-" + Thread.currentThread().getId();
     }
 
     //http://www.h2database.com/html/features.html#multiple_connections
