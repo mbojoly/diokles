@@ -48,9 +48,22 @@ curl -X POST \
 -d '{"databaseCallsNumber":1, "databaseCallDuration":10 }' \
 http://192.168.99.100:8080/compute
 
+$ sudo tc qdisc add dev docker0 root netem delay 500ms
 
+$ sudo tc qdisc show dev docker0
+
+curl -X POST \
+-H "Accept: applicaiton/json" \
+-H "Content-Type: application/json" \
+-d '{"databaseCallsNumber":1, "databaseCallDuration":10 }' \
+http://192.168.99.100:8080/compute
+
+docker-machine ssh default "sudo dumpcap -i docker0 -P -w - -f 'not tcp port 22'" | "C:\Program Files\Wireshark\Wireshark.exe" -k -i -
+
+$ sudo tc qdisc del root dev docker0
 
 
 References
 https://github.com/spotify/docker-maven-plugin
 https://docs.docker.com/reference/run/#env-environment-variables
+http://blog.revollat.net/monitoring-a-distance-du-trafic-reseau-des-containers-docker-avec-wireshark-sous-windows/
