@@ -58,12 +58,22 @@ curl -X POST \
 -d '{"databaseCallsNumber":1, "databaseCallDuration":10 }' \
 http://192.168.99.100:8080/compute
 
-docker-machine ssh default "sudo dumpcap -i docker0 -P -w - -f 'not tcp port 22'" | "C:\Program Files\Wireshark\Wireshark.exe" -k -i -
+
+$ docker machine ssh default
+$$ docker run --privileged=true --net=host --rm corfr/tcpdump -i any -w - not ssh > ./log.pcap
+$$ exit
+$ docker-machine scp default:/home/docker/log.pcap .
+
+$ docker-machine ssh default "docker run -tt --rm  --privileged=true --net=host corfr/tcpdump -i any -w -" > ./log.pcap 
+
+
+$ docker-machine ssh default "docker run --rm --net=host corfr/tcpdump -i any -w - not port 22 2>/dev/null" | "C:\Program Files\Wireshark\wireshark" -k -i -
 
 $ sudo tc qdisc del root dev docker0
-
 
 References
 https://github.com/spotify/docker-maven-plugin
 https://docs.docker.com/reference/run/#env-environment-variables
 http://blog.revollat.net/monitoring-a-distance-du-trafic-reseau-des-containers-docker-avec-wireshark-sous-windows/
+
+https://hub.docker.com/r/corfr/tcpdump/
