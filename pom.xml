@@ -140,7 +140,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.3.3</version>
                 <configuration>
-                    <imageName>microservices</imageName>
+                    <imageName>application</imageName>
                     <baseImage>java</baseImage>
                     <entryPoint>["java", "-jar", "./${project.build.finalName}.jar", "server", "./microservices.yml"]</entryPoint>
                     <!-- copy the service's jar file from target into the root directory of the image -->
