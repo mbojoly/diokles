@@ -2,3 +2,4 @@ template: Hello, %s!
 defaultName: perfmicroservices
 dbHost: $env:DB_HOST:INTERNAL
 dbPort: $env:DB_PORT:9093
+traceLevel: $env:TRACELEVEL:0

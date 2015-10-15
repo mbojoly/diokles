@@ -1,7 +1,7 @@
 package com.octo.rnd.perf.microservices;
 
 import com.octo.rnd.perf.microservices.health.TemplateHealthCheck;
-import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
+import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
 import com.octo.rnd.perf.microservices.resources.ComputeResource;
 import com.octo.rnd.perf.microservices.resources.HelloWorldResource;
 import de.thomaskrille.dropwizard.environment_configuration.EnvironmentConfigurationFactoryFactory;
@@ -51,7 +51,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
         );
         environment.jersey().register(resource);
 
-        final DAOFactoryImpl daoFactory = new DAOFactoryImpl(configuration);
+        final DAOImpl daoFactory = new DAOImpl(configuration);
 
         final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
                 .build(getName());

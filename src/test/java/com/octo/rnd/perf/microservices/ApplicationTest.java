@@ -1,7 +1,5 @@
 package com.octo.rnd.perf.microservices;
 
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.setup.Environment;
 import org.easymock.EasyMock;
 import org.h2.tools.Server;
 import org.junit.Test;
@@ -13,7 +11,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.sql.SQLException;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 
 @RunWith(PowerMockRunner.class)

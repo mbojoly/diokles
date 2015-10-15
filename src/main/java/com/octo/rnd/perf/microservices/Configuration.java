@@ -23,6 +23,9 @@ public class Configuration extends io.dropwizard.Configuration {
     @NotNull
     private short dbPort;
 
+    @NotNull
+    private short traceLevel;
+
     @JsonProperty
     public String getTemplate() {
         return template;
@@ -59,6 +62,12 @@ public class Configuration extends io.dropwizard.Configuration {
         this.defaultName = name;
     }
 
+    @JsonProperty
+    public short getTraceLevel() { return traceLevel; }
+
+    @JsonProperty
+    public void setTraceLevel(short traceLevelSystem) { this.traceLevel = traceLevel; }
+
     @Valid
     @NotNull
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
@@ -68,3 +77,4 @@ public class Configuration extends io.dropwizard.Configuration {
         return httpClient;
     }
 }
+

@@ -1,10 +1,8 @@
 package com.octo.rnd.perf.microservices.resources;
 
-import com.octo.rnd.perf.microservices.Application;
 import com.octo.rnd.perf.microservices.Configuration;
-import com.octo.rnd.perf.microservices.jdbi.DAOFactoryImpl;
+import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
 import org.h2.tools.Server;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -24,14 +22,14 @@ public class ComputeResourceIntegrationTest {
 
     static Server server;
     static Configuration conf;
-    static DAOFactoryImpl daoFactory;
+    static DAOImpl dao;
     static {
         conf = new Configuration();
         conf.setDbHost("localhost");
         conf.setDbPort((short) 9193);
-        //Be sure to have only one DAOFactory for all the application
+        //Be sure to have only one DAO for all the application
         //In the contrary there will be several DB per thread as ThreadLocal is specific to a pair (instance, thread)
-        daoFactory = new DAOFactoryImpl(conf);
+        dao = new DAOImpl(conf);
     }
 
 
@@ -105,10 +103,10 @@ public class ComputeResourceIntegrationTest {
 
         private void doDbCall(long inputTime) {
 
-            //Force to build the DB before measuring
-            daoFactory.getProcStockDAO();
+            //Force building the DB before measuring
+            dao.callStoredProcedure(1);
 
-            ComputeResource cr = new ComputeResource(daoFactory, null);
+            ComputeResource cr = new ComputeResource(dao, null);
 
             logger.debug("Start Calling a stored procedure of {} ms", inputTime);
             final int nbOfCalls = 1;
@@ -127,7 +125,7 @@ public class ComputeResourceIntegrationTest {
             }
 
 
-            doTearDown(daoFactory.getDbi());
+            doTearDown(dao.getDbi());
         }
     }
 

@@ -3,8 +3,7 @@ package com.octo.rnd.perf.microservices.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.octo.rnd.perf.microservices.Application;
-import com.octo.rnd.perf.microservices.jdbi.DAOFactory;
-import com.octo.rnd.perf.microservices.jdbi.StoredProcDAO;
+import com.octo.rnd.perf.microservices.jdbi.DAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +22,11 @@ import java.util.Random;
 @Path("/compute")
 public class ComputeResource {
     final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
-    final DAOFactory daoFactory;
+    final DAO dao;
     final Client rsClient;
 
-    public ComputeResource(final DAOFactory daoFactory, Client rsClient) {
-        this.daoFactory = daoFactory;
+    public ComputeResource(final DAO dao, Client rsClient) {
+        this.dao = dao;
         this.rsClient = rsClient;
     }
 
@@ -108,10 +107,9 @@ public class ComputeResource {
      */
     public long callDatabase(final long nbCalls, final long targetUnitMillis) {
         final long begin = System.nanoTime();
-        StoredProcDAO storedProcDAO = daoFactory.getProcStockDAO();
         for (long i = 0; i < nbCalls; i++) {
             //https://github.com/stevenalexander/dropwizard-jdbi
-            storedProcDAO.callStoredProcedure(targetUnitMillis);
+            dao.callStoredProcedure(targetUnitMillis);
         }
         final long end = System.nanoTime();
         return (end - begin) / Application.MS_IN_NS;

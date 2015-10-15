@@ -51,9 +51,9 @@ curl -X POST \
 -d '{"databaseCallsNumber":1, "databaseCallDuration":10 }' \
 http://192.168.99.100:8080/compute
 
-$ sudo tc qdisc add dev docker0 root netem delay 500ms
-
-$ sudo tc qdisc show dev docker0
+$ sudo docker-machine ssh default
+$$ sudo tc qdisc add dev docker0 root netem delay 500ms
+$$ sudo tc qdisc show dev docker0
 
 curl -X POST \
 -H "Accept: applicaiton/json" \
@@ -67,12 +67,7 @@ $$ docker run --privileged=true --net=host --rm corfr/tcpdump -i docker0 -w - no
 $$ exit
 $ docker-machine scp default:/home/docker/log.pcap .
 
-$ docker-machine ssh default "docker run -tt --rm  --privileged=true --net=host corfr/tcpdump -i docker0 -w -" > ./log.pcap 
-
-
-$ docker-machine ssh default "docker run --rm --net=host corfr/tcpdump -i docker0 -w - not port 22 2>/dev/null" | "C:\Program Files\Wireshark\wireshark" -k -i -
-
-$ sudo tc qdisc del root dev docker0
+$$ sudo tc qdisc del root dev docker0
 
 References
 https://github.com/spotify/docker-maven-plugin

@@ -25,13 +25,15 @@ public class Helper {
         }
     }
 
-    public static MeasuredTime measureTime(Function<Long, Optional<Long>> operationToMeasure, final long UnitInputTime, int nbOfCalls) {
-        final long totalTime = UnitInputTime * nbOfCalls;
+    public static MeasuredTime measureTime(Function<Long, Optional<Long>> operationToMeasure, final long unitInputTime, int nbOfCalls) {
+        final long totalTime = unitInputTime * nbOfCalls;
         final long start = System.nanoTime();
-        final Optional<Long> result = operationToMeasure.apply(UnitInputTime);
+        final Optional<Long> result = operationToMeasure.apply(unitInputTime);
         final long end = System.nanoTime();
         final long elapse = (end - start) / Application.MS_IN_NS; //Convert ns to ms
         logger.debug("Elapse is {} ms", elapse);
+        logger.debug("unitInputTime is {} ms", unitInputTime);
+        logger.debug("nbOfCalls is {}", nbOfCalls);
         final double error = (double) (Math.abs(totalTime - elapse)) / totalTime;
         logger.debug("Error between input and measure is {}", error);
         return new MeasuredTime(result, error);
