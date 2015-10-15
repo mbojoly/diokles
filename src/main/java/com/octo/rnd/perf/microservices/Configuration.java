@@ -76,5 +76,8 @@ public class Configuration extends io.dropwizard.Configuration {
     public JerseyClientConfiguration getJerseyClientConfiguration() {
         return httpClient;
     }
+
+    @JsonProperty("httpClient")
+    public void setJerseyClientConfiguration(JerseyClientConfiguration conf) { this.httpClient = conf; }
 }
 

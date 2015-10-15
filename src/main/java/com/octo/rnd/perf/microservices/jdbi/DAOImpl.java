@@ -59,7 +59,7 @@ public class DAOImpl implements DAO {
                     try {
                         h.execute("drop alias sleep");
                     } catch (Exception e) {
-                        // okay if not present
+                        logger.debug("Drop alias sleep failed (normal not present)", e);
                     }
 
                     h.execute("CREATE ALIAS SLEEP " +

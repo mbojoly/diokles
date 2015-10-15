@@ -52,7 +52,7 @@ curl -X POST \
 http://192.168.99.100:8080/compute
 
 $ sudo docker-machine ssh default
-$$ sudo tc qdisc add dev docker0 root netem delay 500ms
+$$ sudo tc qdisc add dev docker0 root netem delay 10ms
 $$ sudo tc qdisc show dev docker0
 
 curl -X POST \

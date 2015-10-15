@@ -29,7 +29,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
     @Override
     public String getName() {
-        return "hello-world";
+        return "perfmicroservices";
     }
 
     @Override
@@ -62,7 +62,6 @@ public class Application extends io.dropwizard.Application<Configuration> {
         final TemplateHealthCheck healthCheck =
                 new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
-        environment.jersey().register(resource);
     }
 
     void startH2IfNeeded(Configuration configuration) throws SQLException {

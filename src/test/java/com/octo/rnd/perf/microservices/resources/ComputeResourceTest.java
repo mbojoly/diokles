@@ -91,7 +91,7 @@ public class ComputeResourceTest {
     }
 
 
-    @Test
+    //@Test
     public void testCallDatabaseTwice() {
 
         final long inputTime = 100;
