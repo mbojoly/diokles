@@ -66,7 +66,7 @@ public class Configuration extends io.dropwizard.Configuration {
     public short getTraceLevel() { return traceLevel; }
 
     @JsonProperty
-    public void setTraceLevel(short traceLevelSystem) { this.traceLevel = traceLevel; }
+    public void setTraceLevel(short traceLevel) { this.traceLevel = traceLevel; }
 
     @Valid
     @NotNull

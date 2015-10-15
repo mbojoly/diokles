@@ -1,17 +1,19 @@
 package com.octo.rnd.perf.microservices.jdbi;
 
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.octo.rnd.perf.microservices.Application;
 import com.octo.rnd.perf.microservices.Configuration;
-import org.h2.jdbcx.JdbcConnectionPool;
+import org.skife.jdbi.v2.Call;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.exceptions.DBIException;
+import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
+import java.beans.PropertyVetoException;
 
 public class DAOImpl implements DAO {
 
@@ -37,13 +39,23 @@ public class DAOImpl implements DAO {
 
         if(dbi == null) {
             dbi=
-            new ThreadLocal<DBI>() {
+            new ThreadLocal<DBI>()  {
                 @Override protected DBI initialValue() {
                     final String h2Url = buildH2Url(dbHost, dbPort, traceLevelSystem);
-                    DataSource ds = JdbcConnectionPool.create(h2Url, "", "");
+                    ComboPooledDataSource ds = new ComboPooledDataSource ();
+                    try {
+                        ds.setDriverClass("org.h2.Driver");
+                    } catch (PropertyVetoException e) {
+                        logger.error("Unable to load the org.h2.Driver", e);
+                        throw new RuntimeException("Unable to load h2 driver");
+                    }
+                    ds.setJdbcUrl(h2Url);
+                    ds.setAcquireIncrement(1);
+                    ds.setInitialPoolSize(0);
+                    ds.setMaxPoolSize(1);
+
                     final DBI localDbi = new DBI(ds);
                     final Handle h = localDbi.open();
-                    h.begin();
                     try {
                         h.execute("drop alias sleep");
                     } catch (Exception e) {
@@ -54,7 +66,6 @@ public class DAOImpl implements DAO {
                             "FOR \"java.lang.Thread.sleep\"");
                     logger.debug("SLEEP ProcStock created for {}", h2Url);
 
-                    h.commit();
                     h.close();
 
                     return localDbi;
@@ -85,13 +96,6 @@ public class DAOImpl implements DAO {
 
     public final void callStoredProcedure(long millis) {
         StoredProc sp = getDbi().onDemand(StoredProc.class);
-        sp.begin();
-        try {
-            sp.callStoredProcedure(millis);
-            sp.commit();
-        } catch(DBIException dbiex) {
-            sp.rollback();
-            throw dbiex;
-        }
+        sp.callStoredProcedure(millis);
     }
 }
