@@ -1,5 +1,14 @@
 #!/bin/sh
 
+TARGET=$1
+if [[ ! -z "$TARGET" ]]
+then
+	echo "Clean $TARGET"
+else
+	TARGET=application
+	echo "Clean $TARGET"
+fi
+
 DOCKER_PROC=$(docker ps -q)
 if [[ ! -z "$DOCKER_PROC" ]] 
 then
@@ -26,8 +35,7 @@ RemoveImages() {
 }
 
 RemoveImages $(docker images | grep '<none>' | tr -s ' ' | cut -d ' ' -f 3)
-RemoveImages $(docker images | grep 'application' | tr -s ' ' | cut -d ' ' -f 3)
-RemoveImages $(docker images | grep 'db' | tr -s ' ' | cut -d ' ' -f 3)
+RemoveImages $(docker images | grep "$TARGET" | tr -s ' ' | cut -d ' ' -f 3)
 
 mvn clean
 
