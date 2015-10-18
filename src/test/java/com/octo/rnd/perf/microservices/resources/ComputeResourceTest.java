@@ -128,6 +128,8 @@ public class ComputeResourceTest {
     public void testTimeForCpuIntensiveCompute() {
         ComputeResource cr = new ComputeResource(null, null);
         final long inputTime = 100;
+        //Warm-up
+        Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         Helper.MeasuredTime mt = Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         if (mt.InnerTimeMillis.isPresent()) assertThat(mt.InnerTimeMillis.get()).isLessThanOrEqualTo(inputTime);
         assertThat(mt.PercentError).isLessThan(0.2);
