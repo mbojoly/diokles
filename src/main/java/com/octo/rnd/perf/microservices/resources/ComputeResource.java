@@ -77,7 +77,7 @@ public class ComputeResource {
      */
     public String callRestResource(ComputationDescription computationDescription) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Call HTTP Ressources :");
+        builder.append("Call HTTP Ressources : ");
         final long begin = System.nanoTime();
         if (computationDescription.getServiceCalls() != null && computationDescription.getServiceCalls().size() > 0) {
             WebTarget target = rsClient.target("http://localhost:8080").path("compute");
@@ -88,13 +88,13 @@ public class ComputeResource {
                     Response response = target.request(MediaType.TEXT_PLAIN).post(Entity.entity(sc.getComputationDescription(), MediaType.APPLICATION_JSON_TYPE));
                     final String rspContent = response.readEntity(String.class);
                     final String[] rspLines = rspContent.split(System.lineSeparator());
-                    builder.append('{').append(System.lineSeparator());
+                    builder.append("{").append(System.lineSeparator());
                     for(String l : rspLines) {
                         if(!"".equals(l)) { //Remove blank line added for visibility
                             builder.append('\t').append(l).append(System.lineSeparator());
                         }
                     }
-                    builder.append("},").append(System.lineSeparator());
+                    builder.append("{,").append(System.lineSeparator());
                 }
             }
 
