@@ -11,5 +11,5 @@ fi
 curl -X POST \
 -H "Accept: applicaiton/json" \
 -H "Content-Type: application/json" \
--d '{"cpuIntensiveComputationsDuration":60, "databaseCallsNumber":6, "databaseCallDuration":10 }' \
+-d '{"cpuIntensiveComputationsDuration":70, "databaseCallsNumber":7, "databaseCallDuration":14 }' \
 http://$HOST:8080/compute
