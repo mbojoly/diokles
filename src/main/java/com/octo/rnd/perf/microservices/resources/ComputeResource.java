@@ -3,11 +3,13 @@ package com.octo.rnd.perf.microservices.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.octo.rnd.perf.microservices.Application;
+import com.octo.rnd.perf.microservices.Configuration;
 import com.octo.rnd.perf.microservices.jdbi.DAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,10 +26,12 @@ public class ComputeResource {
     final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
     final DAO dao;
     final Client rsClient;
+    final String httpTarget;
 
-    public ComputeResource(final DAO dao, Client rsClient) {
+    public ComputeResource(final DAO dao, Client rsClient, @NotNull Configuration configuration) {
         this.dao = dao;
         this.rsClient = rsClient;
+        this.httpTarget = configuration  != null ? "http://" + configuration.getHttpHost() + ":8080" : "No configuration";
     }
 
     @GET
@@ -80,7 +84,7 @@ public class ComputeResource {
         builder.append("Call HTTP Ressources : ");
         final long begin = System.nanoTime();
         if (computationDescription.getServiceCalls() != null && computationDescription.getServiceCalls().size() > 0) {
-            WebTarget target = rsClient.target("http://localhost:8080").path("compute");
+            WebTarget target = rsClient.target(this.httpTarget).path("compute");
 
             //TODO : Check the client header in order to use a JSON format rather that plain old text
             for (ComputationDescription.ServiceCall sc : computationDescription.getServiceCalls()) {

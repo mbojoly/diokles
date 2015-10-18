@@ -17,8 +17,10 @@ public class Configuration extends io.dropwizard.Configuration {
     private String defaultName = "Stranger";
 
     @NotEmpty
-    @Pattern(regexp="([\\da-zA-Z\\.-]+)")
     private String dbHost;
+
+    @NotEmpty
+    private String httpHost;
 
     @NotNull
     private short dbPort;
@@ -51,6 +53,12 @@ public class Configuration extends io.dropwizard.Configuration {
 
     @JsonProperty
     public void setDbPort(short dbPort) { this.dbPort = dbPort; }
+
+    @JsonProperty
+    public String getHttpHost() { return httpHost; }
+
+    @JsonProperty
+    public void setHttpHost(String httpHost) { this.httpHost = httpHost; }
 
     @JsonProperty
     public String getDefaultName() {

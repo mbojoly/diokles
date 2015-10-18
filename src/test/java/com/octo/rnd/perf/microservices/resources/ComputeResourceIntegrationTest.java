@@ -106,7 +106,7 @@ public class ComputeResourceIntegrationTest {
             //Force building the DB before measuring
             dao.callStoredProcedure(1);
 
-            ComputeResource cr = new ComputeResource(dao, null);
+            ComputeResource cr = new ComputeResource(dao, null, null);
 
             logger.debug("Start Calling a stored procedure of {} ms", inputTime);
             final int nbOfCalls = 1;

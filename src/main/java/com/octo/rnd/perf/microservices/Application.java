@@ -44,12 +44,12 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
         startH2IfNeeded(configuration);
 
-        final DAOImpl daoFactory = new DAOImpl(configuration);
+        final DAOImpl dao = new DAOImpl(configuration);
 
         final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
                 .build(getName());
 
-        final ComputeResource computeResource = new ComputeResource(daoFactory, client);
+        final ComputeResource computeResource = new ComputeResource(dao, client, configuration);
         environment.jersey().register(computeResource);
 
         final TemplateHealthCheck healthCheck =

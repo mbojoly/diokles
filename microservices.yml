@@ -2,6 +2,7 @@ template: Hello, %s!
 defaultName: perfmicroservices
 dbHost: $env:DB_HOST:INTERNAL
 dbPort: $env:DB_PORT:9093
+httpHost: $env:HTTP_HOST:localhost
 traceLevel: $env:TRACE_LEVEL:-1
 httpClient:
   timeout: 5000ms

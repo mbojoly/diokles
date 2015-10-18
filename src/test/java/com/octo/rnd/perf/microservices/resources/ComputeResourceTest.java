@@ -1,5 +1,6 @@
 package com.octo.rnd.perf.microservices.resources;
 
+import com.octo.rnd.perf.microservices.Configuration;
 import com.octo.rnd.perf.microservices.jdbi.DAO;
 import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
 import com.octo.rnd.perf.microservices.jdbi.StoredProc;
@@ -76,7 +77,7 @@ public class ComputeResourceTest {
         DAO dao = new DAOImpl(dbi);
         final long inputTime = 100;
 
-        ComputeResource cr = new ComputeResource(dao, null);
+        ComputeResource cr = new ComputeResource(dao, null, null);
 
 
         final int nbOfCalls = 1;
@@ -99,7 +100,7 @@ public class ComputeResourceTest {
         daoMock.callStoredProcedure(inputTime);
         daoMock.callStoredProcedure(inputTime);
 
-        ComputeResource cr = new ComputeResource(daoMock, null);
+        ComputeResource cr = new ComputeResource(daoMock, null, null);
 
         replay(daoMock);
 
@@ -110,7 +111,7 @@ public class ComputeResourceTest {
     public void testTimeForCallDatabaseTwice() {
         DAO dao = new DAOImpl(dbi);
 
-        ComputeResource cr = new ComputeResource(dao, null);
+        ComputeResource cr = new ComputeResource(dao, null, null);
 
         final long inputTime = 100;
         final int nbOfCalls = 1;
@@ -126,7 +127,7 @@ public class ComputeResourceTest {
 
     @Test
     public void testTimeForCpuIntensiveCompute() {
-        ComputeResource cr = new ComputeResource(null, null);
+        ComputeResource cr = new ComputeResource(null, null, null);
         final long inputTime = 100;
         //Warm-up
         Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
@@ -146,6 +147,8 @@ public class ComputeResourceTest {
                 )
         );
         Client rsClientMock = createMock(Client.class);
+        Configuration conf = new Configuration();
+        conf.setHttpHost("localhost");
         Invocation.Builder builderMock = createMock(Invocation.Builder.class);
         WebTarget webTargetMock = createMock(WebTarget.class);
         Response responseMock = createMock(Response.class);
@@ -167,7 +170,7 @@ public class ComputeResourceTest {
         replay(responseMock);
         replay(rsClientMock);
 
-        ComputeResource cs = new ComputeResource(null, rsClientMock);
+        ComputeResource cs = new ComputeResource(null, rsClientMock, conf);
         String response = cs.callRestResource(cd);
         assertThat(response).contains(NOTHING_IT_IS_JUSTE_A_MOCK);
 
