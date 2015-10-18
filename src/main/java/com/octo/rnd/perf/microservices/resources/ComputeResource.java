@@ -67,7 +67,7 @@ public class ComputeResource {
         builder.append(System.lineSeparator());
 
         time = cpuIntensiveCompute(computationDescription.getCpuIntensiveComputationsDuration());
-        builder.append("CPU intensive compute ").append(time).append("ms. ");
+        builder.append("CPU intensive compute ").append(time).append(" ms. ");
 
 
         return builder.toString();
