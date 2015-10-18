@@ -17,6 +17,8 @@ hs_err_pid*
 
 #maven
 target
+dependency-reduced-pom.xml
+
 
 
 

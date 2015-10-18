@@ -63,11 +63,13 @@ http://192.168.99.100:8080/compute
 
 
 $ docker-machine ssh default
-$$ docker run --privileged=true --net=host --rm corfr/tcpdump -i docker0 -w - not ssh > ./log.pcap
+$$ docker run --privileged=true --net=host --rm corfr/tcpdump -i docker0 -w - > ./log.pcap
 $$ exit
 $ docker-machine scp default:/home/docker/log.pcap .
 
 $$ sudo tc qdisc del root dev docker0
+
+$ docker-machine scp ./sh/quizz-on.sh default:/home/docker/quizz-on.sh
 
 References
 https://github.com/spotify/docker-maven-plugin
