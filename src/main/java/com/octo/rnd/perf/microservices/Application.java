@@ -3,7 +3,6 @@ package com.octo.rnd.perf.microservices;
 import com.octo.rnd.perf.microservices.health.TemplateHealthCheck;
 import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
 import com.octo.rnd.perf.microservices.resources.ComputeResource;
-import com.octo.rnd.perf.microservices.resources.HelloWorldResource;
 import de.thomaskrille.dropwizard.environment_configuration.EnvironmentConfigurationFactoryFactory;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
@@ -44,12 +43,6 @@ public class Application extends io.dropwizard.Application<Configuration> {
                     Environment environment) throws SQLException {
 
         startH2IfNeeded(configuration);
-
-        final HelloWorldResource resource = new HelloWorldResource(
-                configuration.getTemplate(),
-                configuration.getDefaultName()
-        );
-        environment.jersey().register(resource);
 
         final DAOImpl daoFactory = new DAOImpl(configuration);
 

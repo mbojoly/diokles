@@ -33,8 +33,8 @@ public class ComputeResource {
     @GET
     @Timed
     public String get() {
-        return "Creating a new resource is volontary doing the worst thing a performance application can do. " +
-                "Just POST and See...";
+        return "POST on this compute ressource a description of the behaviour you want to simulate : " +
+                "'{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":12, \"serviceCalls\":[{\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }]}'";
     }
 
     @POST
@@ -42,9 +42,14 @@ public class ComputeResource {
     public String compute(@Valid ComputationDescription computationDescription) {
         if (computationDescription == null) throw new IllegalArgumentException();
 
-        StringBuilder builder = new StringBuilder();
-
+        final StringBuilder builder = new StringBuilder(System.lineSeparator());
         long time;
+
+        builder.append(
+                callRestResource(computationDescription)
+        );
+
+        builder.append(System.lineSeparator());
 
         time = callDatabase(computationDescription.getDatabaseCallsNumber(), computationDescription.getDatabaseCallDuration());
         builder.append("Call the database ")
@@ -53,15 +58,13 @@ public class ComputeResource {
                 .append(computationDescription.getDatabaseCallDuration())
                 .append(" ms. each for a total of ")
                 .append(time)
-                .append(" ms.")
-                .append(System.lineSeparator());
+                .append(" ms.");
+
+        builder.append(System.lineSeparator());
 
         time = cpuIntensiveCompute(computationDescription.getCpuIntensiveComputationsDuration());
-        builder.append("CPU intensive compute ").append(time).append("ms. ").append(System.lineSeparator());
+        builder.append("CPU intensive compute ").append(time).append("ms. ");
 
-        builder.append(
-                callRestResource(computationDescription)
-        );
 
         return builder.toString();
     }
@@ -79,13 +82,19 @@ public class ComputeResource {
         if (computationDescription.getServiceCalls() != null && computationDescription.getServiceCalls().size() > 0) {
             WebTarget target = rsClient.target("http://localhost:8080").path("compute");
 
-            //TODO : Check the log
-            //TODO : Check the client header (see log of dropwizard for recursive call)
+            //TODO : Check the client header in order to use a JSON format rather that plain old text
             for (ComputationDescription.ServiceCall sc : computationDescription.getServiceCalls()) {
                 for (int i = 0; i < sc.getCallsNumber(); i++) {
                     Response response = target.request(MediaType.TEXT_PLAIN).post(Entity.entity(sc.getComputationDescription(), MediaType.APPLICATION_JSON_TYPE));
-                    builder.append('{').append(System.lineSeparator()).append(response.readEntity(String.class))
-                    .append('}').append(System.lineSeparator());
+                    final String rspContent = response.readEntity(String.class);
+                    final String[] rspLines = rspContent.split(System.lineSeparator());
+                    builder.append('{').append(System.lineSeparator());
+                    for(String l : rspLines) {
+                        if(!"".equals(l)) { //Remove blank line added for visibility
+                            builder.append('\t').append(l).append(System.lineSeparator());
+                        }
+                    }
+                    builder.append("},").append(System.lineSeparator());
                 }
             }
 
@@ -93,7 +102,7 @@ public class ComputeResource {
 
         final long end = System.nanoTime();
         final double duration = (end - begin) / Application.MS_IN_NS;
-        builder.append(" For a total of ")
+        builder.append("For an HTTP ressources total of ")
                 .append(duration)
                 .append(" ms.");
         return builder.toString();
@@ -136,7 +145,7 @@ public class ComputeResource {
         BigDecimal actualValue = BigDecimal.ZERO;
         long end = System.nanoTime();
         long elapse = end - start;
-        long maxIncElapse = 0; //maximum elapse time by loop
+        long maxIncElapse = elapse; //maximum elapse time by loop
 
         //Prefer to be below than above because function call especially at startup is costly
         while (elapse + maxIncElapse < targetMillis * Application.MS_IN_NS) {
