@@ -1,14 +1,11 @@
-package com.octo.rnd.perf.microservices.jdbi;
+package com.octo.rnd.perf.diokles.jdbi;
 
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.octo.rnd.perf.microservices.Application;
-import com.octo.rnd.perf.microservices.Configuration;
-import org.skife.jdbi.v2.Call;
+import com.octo.rnd.perf.diokles.Application;
+import com.octo.rnd.perf.diokles.Configuration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.exceptions.DBIException;
-import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices.resources;
+package com.octo.rnd.perf.diokles.resources;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

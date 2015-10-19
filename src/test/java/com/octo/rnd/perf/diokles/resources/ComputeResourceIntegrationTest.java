@@ -1,7 +1,7 @@
-package com.octo.rnd.perf.microservices.resources;
+package com.octo.rnd.perf.diokles.resources;
 
-import com.octo.rnd.perf.microservices.Configuration;
-import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
+import com.octo.rnd.perf.diokles.Configuration;
+import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
 import org.h2.tools.Server;
 import org.junit.BeforeClass;
 import org.junit.Test;

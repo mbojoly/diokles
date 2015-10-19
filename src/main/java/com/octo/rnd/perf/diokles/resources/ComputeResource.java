@@ -1,10 +1,10 @@
-package com.octo.rnd.perf.microservices.resources;
+package com.octo.rnd.perf.diokles.resources;
 
 
 import com.codahale.metrics.annotation.Timed;
-import com.octo.rnd.perf.microservices.Application;
-import com.octo.rnd.perf.microservices.Configuration;
-import com.octo.rnd.perf.microservices.jdbi.DAO;
+import com.octo.rnd.perf.diokles.Application;
+import com.octo.rnd.perf.diokles.Configuration;
+import com.octo.rnd.perf.diokles.jdbi.DAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

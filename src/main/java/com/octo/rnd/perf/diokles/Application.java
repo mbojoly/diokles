@@ -1,8 +1,8 @@
-package com.octo.rnd.perf.microservices;
+package com.octo.rnd.perf.diokles;
 
-import com.octo.rnd.perf.microservices.health.TemplateHealthCheck;
-import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
-import com.octo.rnd.perf.microservices.resources.ComputeResource;
+import com.octo.rnd.perf.diokles.health.TemplateHealthCheck;
+import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
+import com.octo.rnd.perf.diokles.resources.ComputeResource;
 import de.thomaskrille.dropwizard.environment_configuration.EnvironmentConfigurationFactoryFactory;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
@@ -28,7 +28,7 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
     @Override
     public String getName() {
-        return "perfmicroservices";
+        return "diokles";
     }
 
     @Override

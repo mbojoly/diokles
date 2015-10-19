@@ -1,5 +1,5 @@
 template: Hello, %s!
-defaultName: perfmicroservices
+defaultName: diokles
 dbHost: $env:DB_HOST:INTERNAL
 dbPort: $env:DB_PORT:9093
 httpHost: $env:HTTP_HOST:localhost

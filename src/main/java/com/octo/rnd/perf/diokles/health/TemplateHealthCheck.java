@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices.health;
+package com.octo.rnd.perf.diokles.health;
 
 import com.codahale.metrics.health.HealthCheck;
 

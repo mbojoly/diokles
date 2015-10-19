@@ -1,9 +1,8 @@
-package com.octo.rnd.perf.microservices.resources;
+package com.octo.rnd.perf.diokles.resources;
 
-import com.octo.rnd.perf.microservices.Configuration;
-import com.octo.rnd.perf.microservices.jdbi.DAO;
-import com.octo.rnd.perf.microservices.jdbi.DAOImpl;
-import com.octo.rnd.perf.microservices.jdbi.StoredProc;
+import com.octo.rnd.perf.diokles.Configuration;
+import com.octo.rnd.perf.diokles.jdbi.DAO;
+import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
 import org.easymock.EasyMock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

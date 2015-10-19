@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices.jdbi;
+package com.octo.rnd.perf.diokles.jdbi;
 
 
 import org.skife.jdbi.v2.sqlobject.Bind;

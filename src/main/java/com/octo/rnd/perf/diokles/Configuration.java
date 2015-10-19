@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices;
+package com.octo.rnd.perf.diokles;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("unused")
 public class Configuration extends io.dropwizard.Configuration {

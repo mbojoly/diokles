@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices;
+package com.octo.rnd.perf.diokles;
 
 import org.easymock.EasyMock;
 import org.h2.tools.Server;

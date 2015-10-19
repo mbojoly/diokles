@@ -1,6 +1,6 @@
-package com.octo.rnd.perf.microservices.resources;
+package com.octo.rnd.perf.diokles.resources;
 
-import com.octo.rnd.perf.microservices.Application;
+import com.octo.rnd.perf.diokles.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

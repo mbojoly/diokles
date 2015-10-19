@@ -1,4 +1,4 @@
-java -jar target/microservices-1.0-SNAPSHOT.jar server microservices.yml
+java -jar target/diokles-1.0-SNAPSHOT.jar server diokles.yml
 
 curl -X POST \
 -H "Accept: applicaiton/json" \

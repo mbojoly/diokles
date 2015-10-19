@@ -1,4 +1,4 @@
-package com.octo.rnd.perf.microservices.jdbi;
+package com.octo.rnd.perf.diokles.jdbi;
 
 import org.hamcrest.core.StringEndsWith;
 import org.hamcrest.core.StringStartsWith;
