@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -v
 
 if [[ ! -z $1 ]] 
 then
