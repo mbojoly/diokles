@@ -8,7 +8,40 @@
     <artifactId>diokles</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>OCTO Technology</name>
+        <url>http://www.octo.com/</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>MBO</id>
+            <name>mbojoly@octo.com</name>
+            <organization>OCTO Technology</organization>
+            <organizationUrl>http://www.octo.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <inceptionYear>2015</inceptionYear>
+
+    <scm>
+        <connection>scm:git:https://github.com/mbojoly/diokles</connection>
+        <developerConnection>scm::git:git@github.com:mbojoly/diokles.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/mbojoly/diokles</url>
+    </scm>
+
     <properties>
+        <license.licenseName>apache_v2</license.licenseName>
         <dropwizard.version>0.8.1</dropwizard.version>
         <dropwizard.jdbi.version>0.8.1</dropwizard.jdbi.version>
         <dropwizard.client.version>0.8.1</dropwizard.client.version>
@@ -164,6 +197,26 @@
                         </resource>
                     </resources>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin-parent</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <licenseName></licenseName>
+                    <excludes>
+                        <exclude>**/README</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
