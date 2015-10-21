@@ -39,3 +39,4 @@ cd <DIOKLES HOME>
 ./sh/quizz-off.sh
 ./sh/stop.sh
 ```
+
