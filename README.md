@@ -2,25 +2,33 @@
 
 ##Description
 DIOKLES is a set of docker appliance that allows to simulate on a single virtual machine like docker-machine several 
-processes in order to diagnose and better understand large problems of performance.
+processes in order to diagnose and better understand large performance problems.
 
 DIOKLES application simulates 
 - CPU intensive task
 - Call to a database
 - HTTP call to another DIOKLES application instance
 
-DIOKLES interface is a single ``/compute` resource with such kind of syntax:
+DIOKLES interface is a single `/compute` resource with such kind of syntax:
 ```
  curl -X POST \
  -H "Accept: applicaiton/json" \
  -H "Content-Type: application/json" \
- -d '{"cpuIntensiveComputationsDuration":70, "databaseCallsNumber":7, "databaseCallDuration":14, \ 
+ -d '{  "cpuIntensiveComputationsDuration":70, \
+        "databaseCallsNumber":7, \
+        "databaseCallDuration":14, \ 
  "serviceCalls":[ \
-   {"computationDescription":{"cpuIntensiveComputationsDuration":70, "databaseCallsNumber":7, "databaseCallDuration":14}, "callsNumber":6 } \ 
+   {"computationDescription":{ \
+        "cpuIntensiveComputationsDuration":70, \ 
+        "databaseCallsNumber":7, \
+        "databaseCallDuration":14 \
+        }, \
+        "callsNumber":6 \
+    } \ 
   ]}' \
  http://$HOST:8080/compute
 ```
-Making the different parameters varies allows to see the impact on the /compute resource response time. DIOKLES
+Making the different parameters vary allows to see the impact on the `/compute` resource response time. DIOKLES
 can be a great tool to learn how to use an APM tool.
 
 ##Getting started
