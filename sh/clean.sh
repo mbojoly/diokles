@@ -5,7 +5,7 @@ if [[ ! -z "$TARGET" ]]
 then
 	echo "Clean $TARGET"
 else
-	TARGET=application
+	TARGET=diokles-application
 	echo "Clean $TARGET"
 fi
 

@@ -6,7 +6,7 @@
 
     <groupId>com.octo.rnd.perf</groupId>
     <artifactId>diokles</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <licenses>
         <license>
@@ -178,7 +178,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.3.3</version>
                 <configuration>
-                    <imageName>application</imageName>
+                    <imageName>diokles-application</imageName>
                     <baseImage>java</baseImage>
                     <entryPoint>["java", "-jar", "./${project.build.finalName}.jar", "server", "./diokles.yml"]</entryPoint>
                     <!-- copy the service's jar file from target into the root directory of the image -->
@@ -211,11 +211,6 @@
                     </excludes>
                 </configuration>
                 <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>

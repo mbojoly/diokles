@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t db - < docker/h2-dockerfile
+docker build -t diokles-db - < docker/h2-dockerfile
