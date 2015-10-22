@@ -151,7 +151,7 @@ public class ComputeResourceTest {
                 },
                 inputTime,
                 nbOfCalls);
-        assertThat(mt.PercentError).isLessThan(0.3);
+        assertThat(mt.PercentError).isLessThan(1.5);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ComputeResourceTest {
         Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         Helper.MeasuredTime mt = Helper.measureTime(l -> Optional.of(cr.cpuIntensiveCompute(l)), inputTime, 1);
         if (mt.InnerTimeMillis.isPresent()) assertThat(mt.InnerTimeMillis.get()).isLessThanOrEqualTo(inputTime);
-        assertThat(mt.PercentError).isLessThan(0.2);
+        assertThat(mt.PercentError).isLessThan(1.5);
     }
 
     @Test

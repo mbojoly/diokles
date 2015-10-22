@@ -80,7 +80,6 @@ public class ComputeResourceIntegrationTest {
         if (h != null) h.close();
     }
 
-    @Test
     public void testIntegrationForCallDatabase() throws InterruptedException {
 
         DbCaller dbc1 = new DbCaller();
