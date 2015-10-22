@@ -32,7 +32,7 @@ Making the different parameters vary allows to see the impact on the `/compute` 
 can be a great tool to learn how to use an APM tool.
 
 ##Getting started
-DIOKLES requires Java8+ and Docker 1.8.2+
+DIOKLES requires Java8+ and Docker 1.8.2+ with docker-machine and maven 3.3.3+
 ```
 cd <DIOKLES HOME>
 ./sh/clean.sh

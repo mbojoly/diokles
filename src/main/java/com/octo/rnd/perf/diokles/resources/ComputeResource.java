@@ -52,7 +52,7 @@ public class ComputeResource {
     public ComputeResource(final DAO dao, Client rsClient, @NotNull Configuration configuration) {
         this.dao = dao;
         this.rsClient = rsClient;
-        this.httpTarget = configuration  != null ? "http://" + configuration.getHttpHost() + ":8080" : "No configuration";
+        this.httpTarget = configuration  != null ? "http://" + configuration.getHttpHost() + ":" + Short.toString(configuration.getHttpPort()) : "No configuration";
     }
 
     @GET

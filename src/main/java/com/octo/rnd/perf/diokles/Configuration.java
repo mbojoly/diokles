@@ -42,7 +42,8 @@ public class Configuration extends io.dropwizard.Configuration {
     @NotEmpty
     private String httpHost;
 
-    @NotNull
+    private short httpPort;
+
     private short dbPort;
 
     @NotNull
@@ -79,6 +80,12 @@ public class Configuration extends io.dropwizard.Configuration {
 
     @JsonProperty
     public void setHttpHost(String httpHost) { this.httpHost = httpHost; }
+
+    @JsonProperty
+    public short getHttpPort() { return httpPort; }
+
+    @JsonProperty
+    public void setHttpPort(short httpPort) { this.httpPort = httpPort; }
 
     @JsonProperty
     public String getDefaultName() {

@@ -169,6 +169,7 @@ public class ComputeResourceTest {
         Client rsClientMock = createMock(Client.class);
         Configuration conf = new Configuration();
         conf.setHttpHost("localhost");
+        conf.setHttpPort((short)9090);
         Invocation.Builder builderMock = createMock(Invocation.Builder.class);
         WebTarget webTargetMock = createMock(WebTarget.class);
         Response responseMock = createMock(Response.class);
@@ -182,7 +183,7 @@ public class ComputeResourceTest {
             }
         }
 
-        EasyMock.expect(rsClientMock.target("http://localhost:8080")).andReturn(webTargetMock);
+        EasyMock.expect(rsClientMock.target("http://localhost:9090")).andReturn(webTargetMock);
         EasyMock.expect(webTargetMock.path("compute")).andReturn(webTargetMock);
 
         replay(builderMock);

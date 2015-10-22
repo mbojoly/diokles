@@ -3,6 +3,7 @@ defaultName: diokles
 dbHost: $env:DB_HOST:INTERNAL
 dbPort: $env:DB_PORT:9093
 httpHost: $env:HTTP_HOST:localhost
+httpPort: $env:HTTP_PORT:8080
 traceLevel: $env:TRACE_LEVEL:-1
 httpClient:
   timeout: 5000ms
