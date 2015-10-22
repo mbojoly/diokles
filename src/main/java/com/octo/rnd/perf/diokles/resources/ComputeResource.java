@@ -26,6 +26,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.octo.rnd.perf.diokles.Application;
 import com.octo.rnd.perf.diokles.Configuration;
 import com.octo.rnd.perf.diokles.jdbi.DAO;
+import com.octo.rnd.perf.diokles.jdbi.JDBIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,19 +43,34 @@ import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.Random;
 
+
+/**
+ * /compute ressource description
+ */
 @Path("/compute")
 public class ComputeResource {
-    final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
-    final DAO dao;
-    final Client rsClient;
-    final String httpTarget;
+    public static final String MS = " ms.";
+    private final Logger logger = LoggerFactory.getLogger(ComputeResource.class);
+    private final DAO dao;
+    private final Client rsClient;
+    private final String httpTarget;
 
-    public ComputeResource(final DAO dao, Client rsClient, @NotNull Configuration configuration) {
-        this.dao = dao;
-        this.rsClient = rsClient;
-        this.httpTarget = configuration  != null ? "http://" + configuration.getHttpHost() + ":" + Short.toString(configuration.getHttpPort()) : "No configuration";
+    /**
+     * Constructors
+     * @param pDao dao
+     * @param pRsClient conf of RS
+     * @param pConfiguration conf
+     */
+    public ComputeResource(final DAO pDao, Client pRsClient, @NotNull Configuration pConfiguration) {
+        this.dao = pDao;
+        this.rsClient = pRsClient;
+        this.httpTarget = pConfiguration  != null ? "http://" + pConfiguration.getHttpHost() + ":" + Short.toString(pConfiguration.getHttpPort()) : "No pConfiguration";
     }
 
+    /**
+     * Get
+     * @return Help text
+     */
     @GET
     @Timed
     public String get() {
@@ -62,32 +78,38 @@ public class ComputeResource {
                 "'{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":12, \"serviceCalls\":[{\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }, {\"computationDescription\":{\"cpuIntensiveComputationsDuration\":60, \"databaseCallsNumber\":6, \"databaseCallDuration\":5}, \"callsNumber\":2 }]}'";
     }
 
+    /**
+     *
+     * @param pComputationDescription Description of the service
+     * @return Logs of execution
+     * @throws JDBIException if driver not found
+     */
     @POST
     @Timed
-    public String compute(@Valid ComputationDescription computationDescription) {
-        if (computationDescription == null) throw new IllegalArgumentException();
+    public String compute(@Valid ComputationDescription pComputationDescription) throws JDBIException {
+        if (pComputationDescription == null) { throw new IllegalArgumentException(); }
 
         final StringBuilder builder = new StringBuilder(System.lineSeparator());
         long time;
 
         builder.append(
-                callRestResource(computationDescription)
+                callRestResource(pComputationDescription)
         );
 
         builder.append(System.lineSeparator());
 
-        time = callDatabase(computationDescription.getDatabaseCallsNumber(), computationDescription.getDatabaseCallDuration());
+        time = callDatabase(pComputationDescription.getDatabaseCallsNumber(), pComputationDescription.getDatabaseCallDuration());
         builder.append("Call the database ")
-                .append(computationDescription.getDatabaseCallsNumber())
+                .append(pComputationDescription.getDatabaseCallsNumber())
                 .append(" times during ")
-                .append(computationDescription.getDatabaseCallDuration())
+                .append(pComputationDescription.getDatabaseCallDuration())
                 .append(" ms. each for a total of ")
                 .append(time)
-                .append(" ms.");
+                .append(MS);
 
         builder.append(System.lineSeparator());
 
-        time = cpuIntensiveCompute(computationDescription.getCpuIntensiveComputationsDuration());
+        time = cpuIntensiveCompute(pComputationDescription.getCpuIntensiveComputationsDuration());
         builder.append("CPU intensive compute ").append(time).append(" ms. ");
 
 
@@ -129,7 +151,7 @@ public class ComputeResource {
         final double duration = (end - begin) / Application.MS_IN_NS;
         builder.append("For an HTTP ressources total of ")
                 .append(duration)
-                .append(" ms.");
+                .append(MS);
         return builder.toString();
     }
 
@@ -138,8 +160,10 @@ public class ComputeResource {
      *
      * @param nbCalls          number of Stored Procedure Call to perform
      * @param targetUnitMillis Number of millisecond to sleep
+     * @throws JDBIException if driver not found
+     * @return Time to execute
      */
-    public long callDatabase(final long nbCalls, final long targetUnitMillis) {
+    public long callDatabase(final long nbCalls, final long targetUnitMillis) throws JDBIException {
         final long begin = System.nanoTime();
         for (long i = 0; i < nbCalls; i++) {
             //https://github.com/stevenalexander/dropwizard-jdbi
@@ -156,7 +180,7 @@ public class ComputeResource {
      * @param targetMillis Target elapse compute time in ms.
      * @return Measured elapse compute time in ms. inside the method.
      */
-    long cpuIntensiveCompute(final long targetMillis) {
+    public long cpuIntensiveCompute(final long targetMillis) {
         final long start = System.nanoTime();
         Random random = new Random();
         //Capitalization compute

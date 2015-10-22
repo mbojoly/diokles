@@ -23,6 +23,7 @@ package com.octo.rnd.perf.diokles.resources;
 
 import com.octo.rnd.perf.diokles.Configuration;
 import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
+import com.octo.rnd.perf.diokles.jdbi.JDBIException;
 import org.h2.tools.Server;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -125,7 +126,11 @@ public class ComputeResourceIntegrationTest {
         private void doDbCall(long inputTime) {
 
             //Force building the DB before measuring
-            dao.callStoredProcedure(1);
+            try {
+                dao.callStoredProcedure(1);
+            } catch (JDBIException e) {
+                e.printStackTrace();
+            }
 
             ComputeResource cr = new ComputeResource(dao, null, null);
 
@@ -134,7 +139,11 @@ public class ComputeResourceIntegrationTest {
             try {
                 Helper.MeasuredTime mt = Helper.measureTime(
                         l -> {
-                            cr.callDatabase(nbOfCalls, inputTime);
+                            try {
+                                cr.callDatabase(nbOfCalls, inputTime);
+                            } catch (JDBIException e) {
+                                e.printStackTrace();
+                            }
                             return Optional.empty();
                         },
                         inputTime,

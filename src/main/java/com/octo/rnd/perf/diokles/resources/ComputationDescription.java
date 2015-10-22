@@ -29,6 +29,9 @@ import javax.ws.rs.core.MediaType;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * JSON computation description
+ */
 @SuppressWarnings("unused")
 @Consumes(MediaType.APPLICATION_JSON)
 public class ComputationDescription {
@@ -42,9 +45,9 @@ public class ComputationDescription {
             //Jackson deserialization
         }
 
-        public ServiceCall(ComputationDescription computationDescription, int callsNumber) {
-            this.computationDescription = computationDescription;
-            this.callsNumber = callsNumber;
+        public ServiceCall(ComputationDescription pComputationDescription, int pCallsNumber) {
+            this.computationDescription = pComputationDescription;
+            this.callsNumber = pCallsNumber;
         }
 
         @JsonProperty
@@ -70,37 +73,68 @@ public class ComputationDescription {
     private int databaseCallDuration;
     private List<ServiceCall> serviceCalls = new LinkedList<ServiceCall>();
 
-    public ComputationDescription(int cpuIntensiveComputationsDuration, int databaseCallsNumber, int databaseCallDuration, int serviceCallsNumber, List<ServiceCall> serviceCalls) {
-        this.cpuIntensiveComputationsDuration = cpuIntensiveComputationsDuration;
-        this.databaseCallsNumber = databaseCallsNumber;
-        this.databaseCallDuration = databaseCallDuration;
-        this.serviceCalls = serviceCalls;
+    /**
+     *
+     * @param pCpuIntensiveComputationsDuration in ms.
+     * @param pDatabaseCallsNumber nb. of calls
+     * @param pDatabaseCallDuration in ms.
+     * @param pServiceCallsNumber nb. of calls
+     * @param pServiceCalls calls descriptions
+     */
+    public ComputationDescription(int pCpuIntensiveComputationsDuration, int pDatabaseCallsNumber, int pDatabaseCallDuration, int pServiceCallsNumber, List<ServiceCall> pServiceCalls) {
+        this.cpuIntensiveComputationsDuration = pCpuIntensiveComputationsDuration;
+        this.databaseCallsNumber = pDatabaseCallsNumber;
+        this.databaseCallDuration = pDatabaseCallDuration;
+        this.serviceCalls = pServiceCalls;
     }
 
+    /**
+     * Jackson deserialization
+     */
     public ComputationDescription() {
         // Jackson deserialization
     }
 
+    /**
+     * Getter
+     * @return getter
+     */
     @JsonProperty
     public int getCpuIntensiveComputationsDuration() {
         return cpuIntensiveComputationsDuration;
     }
 
+    /**
+     * Getter
+     * @return getter
+     */
     @JsonProperty
     public int getDatabaseCallsNumber() {
         return databaseCallsNumber;
     }
 
+    /**
+     * Getter
+     * @return getter
+     */
     @JsonProperty
     public int getDatabaseCallDuration() {
         return databaseCallDuration;
     }
 
+    /**
+     * Getter
+     * @return getter
+     */
     @JsonProperty
     public List<ServiceCall> getServiceCalls() {
         return serviceCalls;
     }
 
+    /**
+     * To String
+     * @return string representation
+     */
     @Override
     public String toString() {
         return "ComputationDescription{" +

@@ -30,5 +30,5 @@ import org.skife.jdbi.v2.DBI;
 public interface DAO {
     DBI getDbi();
 
-    void callStoredProcedure(long millis);
+    void callStoredProcedure(long millis) throws JDBIException;
 }

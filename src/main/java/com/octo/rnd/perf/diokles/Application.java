@@ -19,9 +19,6 @@ package com.octo.rnd.perf.diokles;
  * limitations under the License.
  * #L%
  */
-
-
-import com.octo.rnd.perf.diokles.health.TemplateHealthCheck;
 import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
 import com.octo.rnd.perf.diokles.resources.ComputeResource;
 import de.thomaskrille.dropwizard.environment_configuration.EnvironmentConfigurationFactoryFactory;
@@ -35,14 +32,27 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.client.Client;
 import java.sql.SQLException;
 
+/**
+ * Entry point
+ */
 public class Application extends io.dropwizard.Application<Configuration> {
 
-    final static Logger logger = LoggerFactory.getLogger(Application.class);
+    /**
+     * Default constructor
+     */
+    public Application() { super();}
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static final long MS_IN_NS = 1000000;
     public static final String DEFAULT_HOST = "INTERNAL";
     public static final short H2_DEFAULT_TCP_PORT = 9093;
 
+    /**
+     *
+     * @param args Nothing
+     * @throws Exception for any problem
+     */
     public static void main(String[] args) throws Exception {
         new Application().run(args);
     }
@@ -72,16 +82,17 @@ public class Application extends io.dropwizard.Application<Configuration> {
 
         final ComputeResource computeResource = new ComputeResource(dao, client, configuration);
         environment.jersey().register(computeResource);
-
-        final TemplateHealthCheck healthCheck =
-                new TemplateHealthCheck(configuration.getTemplate());
-        environment.healthChecks().register("template", healthCheck);
     }
 
-    void startH2IfNeeded(Configuration configuration) throws SQLException {
+    /**
+     *
+     * @param configuration conf
+     * @throws SQLException if not correctly initialized
+     */
+    public void startH2IfNeeded(Configuration configuration) throws SQLException {
         if(DEFAULT_HOST.equals(configuration.getDbHost())) {
             final String port = Short.toString(Application.H2_DEFAULT_TCP_PORT);
-            logger.info("Starting internal H2 server with port {}", port);
+            LOGGER.info("Starting internal H2 server with port {}", port);
             Server s = Server.createTcpServer("-tcpPort", port);
             s.start();
         }

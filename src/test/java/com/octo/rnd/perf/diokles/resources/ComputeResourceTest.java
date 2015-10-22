@@ -24,6 +24,7 @@ package com.octo.rnd.perf.diokles.resources;
 import com.octo.rnd.perf.diokles.Configuration;
 import com.octo.rnd.perf.diokles.jdbi.DAO;
 import com.octo.rnd.perf.diokles.jdbi.DAOImpl;
+import com.octo.rnd.perf.diokles.jdbi.JDBIException;
 import org.easymock.EasyMock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -103,7 +104,11 @@ public class ComputeResourceTest {
         final int nbOfCalls = 1;
         Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
-                    cr.callDatabase(nbOfCalls, inputTime);
+                    try {
+                        cr.callDatabase(nbOfCalls, inputTime);
+                    } catch (JDBIException e) {
+                        e.printStackTrace();
+                    }
                     return Optional.empty();
                 },
                 inputTime,
@@ -113,7 +118,7 @@ public class ComputeResourceTest {
 
 
     //@Test
-    public void testCallDatabaseTwice() {
+    public void testCallDatabaseTwice() throws JDBIException {
 
         final long inputTime = 100;
         DAO daoMock = createMock(DAO.class);
@@ -137,7 +142,11 @@ public class ComputeResourceTest {
         final int nbOfCalls = 1;
         Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
-                    cr.callDatabase(nbOfCalls, inputTime);
+                    try {
+                        cr.callDatabase(nbOfCalls, inputTime);
+                    } catch (JDBIException e) {
+                        e.printStackTrace();
+                    }
                     return Optional.empty();
                 },
                 inputTime,
@@ -169,7 +178,7 @@ public class ComputeResourceTest {
         Client rsClientMock = createMock(Client.class);
         Configuration conf = new Configuration();
         conf.setHttpHost("localhost");
-        conf.setHttpPort((short)9090);
+        conf.setHttpPort((short) 9090);
         Invocation.Builder builderMock = createMock(Invocation.Builder.class);
         WebTarget webTargetMock = createMock(WebTarget.class);
         Response responseMock = createMock(Response.class);

@@ -33,9 +33,12 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 import java.beans.PropertyVetoException;
 
+/**
+ * DAO for sp call
+ */
 public class DAOImpl implements DAO {
 
-    final static Logger logger = LoggerFactory.getLogger(DAOImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DAOImpl.class);
 
 
     //For testing purpose
@@ -43,11 +46,11 @@ public class DAOImpl implements DAO {
 
     /**
      * For testing purpose
-     * @param dbi To be instancated by unit test
+     * @param pDbi To be instancated by unit test
      */
-    public DAOImpl(@NotNull final DBI dbi) {
+    public DAOImpl(@NotNull final DBI pDbi) {
         this.dbi = new ThreadLocal<>();
-        this.dbi.set(dbi);
+        this.dbi.set(pDbi);
     }
 
     public DAOImpl(@NotNull final Configuration configuration) {
@@ -64,8 +67,8 @@ public class DAOImpl implements DAO {
                     try {
                         ds.setDriverClass("org.h2.Driver");
                     } catch (PropertyVetoException e) {
-                        logger.error("Unable to load the org.h2.Driver", e);
-                        throw new RuntimeException("Unable to load h2 driver");
+                        LOGGER.error("Unable to load the org.h2.Driver", e);
+                        return null;
                     }
                     ds.setJdbcUrl(h2Url);
                     ds.setAcquireIncrement(1);
@@ -76,13 +79,15 @@ public class DAOImpl implements DAO {
                     final Handle h = localDbi.open();
                     try {
                         h.execute("drop alias sleep");
-                    } catch (Exception e) {
-                        logger.debug("Drop alias sleep failed (normal not present)", e);
+                        //org.h2.jdbc.JdbcSQLException: Function alias "SLEEP" not found; SQL statement: is thrown
+                        //but is not declared. strange ?
+                    } catch (Throwable e) {
+                        LOGGER.debug("Drop alias sleep failed (normal not present)", e);
                     }
 
                     h.execute("CREATE ALIAS SLEEP " +
                             "FOR \"java.lang.Thread.sleep\"");
-                    logger.debug("SLEEP ProcStock created for {}", h2Url);
+                    LOGGER.debug("SLEEP ProcStock created for {}", h2Url);
 
                     h.close();
 
@@ -95,7 +100,7 @@ public class DAOImpl implements DAO {
     /**
      * Static for testing purpose
      **/
-    static String buildH2Url(String dbHost, short dbPort, short traceLevelSystem) {
+    public static String buildH2Url(String dbHost, short dbPort, short traceLevelSystem) {
         return "jdbc:h2:tcp://" + (Application.DEFAULT_HOST.equals(dbHost) ? "localhost" : dbHost) + ":" + dbPort + "/~/perfms-" + Thread.currentThread().getId() + ";TRACE_LEVEL_SYSTEM_OUT=" + Short.toString(traceLevelSystem);
     }
 
@@ -112,8 +117,13 @@ public class DAOImpl implements DAO {
         return dbi.get();
     }
 
-    public final void callStoredProcedure(long millis) {
-        StoredProc sp = getDbi().onDemand(StoredProc.class);
-        sp.callStoredProcedure(millis);
+    public final void callStoredProcedure(long millis) throws JDBIException {
+        if(getDbi() != null) {
+            StoredProc sp = getDbi().onDemand(StoredProc.class);
+            sp.callStoredProcedure(millis);
+        }
+        else {
+            throw new JDBIException("Unable to get DB access");
+        }
     }
 }

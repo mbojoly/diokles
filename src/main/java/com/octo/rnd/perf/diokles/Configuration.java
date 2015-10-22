@@ -28,8 +28,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Application configuration
+ */
 @SuppressWarnings("unused")
 public class Configuration extends io.dropwizard.Configuration {
+
+    /** Default configuration **/
+    public Configuration() { super(); }
+
     @NotEmpty
     private String template;
 
@@ -49,14 +56,15 @@ public class Configuration extends io.dropwizard.Configuration {
     @NotNull
     private short traceLevel;
 
+    /** Getter/Setter **/
     @JsonProperty
     public String getTemplate() {
         return template;
     }
 
     @JsonProperty
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setTemplate(String pTemplate) {
+        this.template = pTemplate;
     }
 
     @JsonProperty
@@ -65,27 +73,28 @@ public class Configuration extends io.dropwizard.Configuration {
     }
 
     @JsonProperty
-    public void setDbHost(String dbHost) {
-        this.dbHost = dbHost;
+    public void setDbHost(String pDbHost) {
+        this.dbHost = pDbHost;
     }
+
 
     @JsonProperty
     public short getDbPort() { return dbPort; }
 
     @JsonProperty
-    public void setDbPort(short dbPort) { this.dbPort = dbPort; }
+    public void setDbPort(short pDbPort) { this.dbPort = pDbPort; }
 
     @JsonProperty
     public String getHttpHost() { return httpHost; }
 
     @JsonProperty
-    public void setHttpHost(String httpHost) { this.httpHost = httpHost; }
+    public void setHttpHost(String pHttpHost) { this.httpHost = pHttpHost; }
 
     @JsonProperty
     public short getHttpPort() { return httpPort; }
 
     @JsonProperty
-    public void setHttpPort(short httpPort) { this.httpPort = httpPort; }
+    public void setHttpPort(short pHttpPort) { this.httpPort = pHttpPort; }
 
     @JsonProperty
     public String getDefaultName() {
@@ -101,7 +110,7 @@ public class Configuration extends io.dropwizard.Configuration {
     public short getTraceLevel() { return traceLevel; }
 
     @JsonProperty
-    public void setTraceLevel(short traceLevel) { this.traceLevel = traceLevel; }
+    public void setTraceLevel(short pTraceLevel) { this.traceLevel = pTraceLevel; }
 
     @Valid
     @NotNull
