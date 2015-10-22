@@ -1,5 +1,7 @@
 #DIOKLES : An information system scale performance simulator
 
+[![Build Status](https://travis-ci.org/mbojoly/diokles.svg)](https://travis-ci.org/mbojoly/diokles)
+
 ##Description
 DIOKLES is a set of docker appliance that allows to simulate on a single virtual machine like docker-machine several 
 processes in order to diagnose and better understand large performance problems.
