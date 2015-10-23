@@ -117,7 +117,7 @@ public class ComputeResourceTest {
     }
 
 
-    //@Test
+    @Test
     public void testCallDatabaseTwice() throws JDBIException {
 
         final long inputTime = 100;
@@ -139,7 +139,7 @@ public class ComputeResourceTest {
         ComputeResource cr = new ComputeResource(dao, null, null);
 
         final long inputTime = 100;
-        final int nbOfCalls = 1;
+        final int nbOfCalls = 2;
         Helper.MeasuredTime mt = Helper.measureTime(
                 l -> {
                     try {
