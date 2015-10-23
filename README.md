@@ -33,6 +33,9 @@ DIOKLES interface is a single `/compute` resource with such kind of syntax:
 Making the different parameters vary allows to see the impact on the `/compute` resource response time. DIOKLES
 can be a great tool to learn how to use an APM tool.
 
+In particular, you can investigate N+1 problems errors or add latency to the network through the `./sh/quizz-on.sh` 
+command.
+
 ##Getting started
 DIOKLES requires Java8+ and Docker 1.8.2+ with docker-machine and maven 3.3.3+
 ```
@@ -41,11 +44,15 @@ cd <DIOKLES HOME>
 ./sh/build-h2.sh
 ./sh/build.sh
 ./sh/start.sh
-./sh/poc1.sh
+./sh/poc1.sh 
+#See the response time for a single application call
 ./sh/poc2.sh
+#See the network call for 7 sequential network latency
 #Simulates network latencies
 ./sh/quizz-on.sh
+#See the new response times
 ./sh/poc2.sh
+#Simulate your own topology
 ./sh/quizz-off.sh
 ./sh/stop.sh
 ```

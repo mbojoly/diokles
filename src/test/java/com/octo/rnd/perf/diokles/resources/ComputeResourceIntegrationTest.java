@@ -79,7 +79,7 @@ public class ComputeResourceIntegrationTest {
 
         if (h != null) h.close();
     }
-
+    //@Test : Can be run in local but not in travis
     public void testIntegrationForCallDatabase() throws InterruptedException {
 
         DbCaller dbc1 = new DbCaller();
