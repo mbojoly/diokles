@@ -3,10 +3,14 @@
 [![Build Status](https://travis-ci.org/mbojoly/diokles.svg)](https://travis-ci.org/mbojoly/diokles)
 
 ##Description
-DIOKLES is a set of docker appliance that allows to simulate on a single virtual machine like docker-machine several 
+DIOKLES is a set of docker appliances that allows to simulate on a single virtual machine like docker-machine several 
 processes in order to diagnose and better understand large performance problems.
 
-DIOKLES application simulates 
+As explained during {{soft-shake}} presentation [Comment tester et optimiser la performance d'un SI](https://github.com/mbojoly/softshake-perf-si)
+some end-to-end results can be counter-intuitive when you compare them to the sum of the individual performance results results. Demo at {{soft-shake}} uses DIOKLES
+in order to demonstrate the impact of N+1 requests, N+1 applications calls and network latencies at the IS performance level.
+
+More globally, DIOKLES application simulates 
 - CPU intensive task
 - Call to a database
 - HTTP call to another DIOKLES application instance
@@ -33,7 +37,7 @@ DIOKLES interface is a single `/compute` resource with such kind of syntax:
 Making the different parameters vary allows to see the impact on the `/compute` resource response time. DIOKLES
 can be a great tool to learn how to use an APM tool.
 
-In particular, you can investigate N+1 problems errors or add latency to the network through the `./sh/quizz-on.sh` 
+In particular, you can investigate N+1 problems errors or add latency to the network through the `./sh/poc2.sh` a `./sh/quizz-on.sh` 
 command.
 
 ##Getting started
