@@ -48,16 +48,16 @@ cd <DIOKLES HOME>
 ./sh/build-h2.sh
 ./sh/build.sh
 ./sh/start.sh
-./sh/poc1.sh 
+./sh/poc1.sh <IP of your docker machine>
 #See the response time for a single application call
-./sh/poc2.sh
+./sh/poc2.sh <IP of your docker machine>
 #See the network call for 7 sequential network latency
 #Simulates network latencies
-./sh/quizz-on.sh
+./sh/quizz-on.sh <name of you docker machine e.g. default>
 #See the new response times
-./sh/poc2.sh
+./sh/poc2.sh <IP of your docker machine>
 #Simulate your own topology
-./sh/quizz-off.sh
+./sh/quizz-off.sh <name of your docker machine e.g. default>
 ./sh/stop.sh
 ```
 

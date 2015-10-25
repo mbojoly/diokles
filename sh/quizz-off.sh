@@ -1,6 +1,14 @@
 #!/bin/sh -v
 
-QDISC=$(docker-machine ssh default "sudo /usr/local/sbin/tc qdisc show dev docker0")
+if [[ ! -z $1 ]]
+then
+	MACHINE=$1
+else
+	MACHINE=default
+fi
+
+
+QDISC=$(docker-machine ssh $MACHINE "sudo /usr/local/sbin/tc qdisc show dev docker0")
 
 if [[ ! -z "$QDISC" ]]
 then
