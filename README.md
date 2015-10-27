@@ -42,7 +42,7 @@ command.
 
 ##Getting started
 DIOKLES requires and Docker 1.8.2+ with docker-machine to run.
-It requires Java8+ and maven 3.3.3+ to build
+It requires Java8+ and maven 3.3.3+ to be built.
 
 ###RUN
 ```
