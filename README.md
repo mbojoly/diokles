@@ -41,12 +41,12 @@ In particular, you can investigate N+1 problems errors or add latency to the net
 command.
 
 ##Getting started
-DIOKLES requires Java8+ and Docker 1.8.2+ with docker-machine and maven 3.3.3+
+DIOKLES requires and Docker 1.8.2+ with docker-machine to run.
+It requires Java8+ and maven 3.3.3+ to build
+
+###RUN
 ```
 cd <DIOKLES HOME>
-./sh/clean.sh
-./sh/build-h2.sh
-./sh/build.sh
 ./sh/start.sh
 ./sh/poc1.sh <IP of your docker machine>
 #See the response time for a single application call
@@ -61,3 +61,10 @@ cd <DIOKLES HOME>
 ./sh/stop.sh
 ```
 
+###BUILD
+```
+cd <DIOKLES HOME>
+./sh/clean.sh
+./sh/build-h2.sh
+./sh/build.sh
+```
