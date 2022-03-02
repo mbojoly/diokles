@@ -46,7 +46,7 @@
         <dropwizard.jdbi.version>0.8.1</dropwizard.jdbi.version>
         <dropwizard.client.version>0.8.1</dropwizard.client.version>
         <dropwizard.environment.configuration.version>1.1</dropwizard.environment.configuration.version>
-        <h2.version>1.4.187</h2.version>
+        <h2.version>2.1.210</h2.version>
     </properties>
 
     <dependencies>
